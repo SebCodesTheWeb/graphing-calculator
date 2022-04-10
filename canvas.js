@@ -1,14 +1,14 @@
-const canvas = document.querySelector("canvas");
-const c = canvas.getContext("2d");
+export const canvas = document.querySelector("canvas");
+export const c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 let scale = 16;
 let scaleX = 16; //The amount of boxes per row
 let scaleY = 16; //The amount of boxes per column
-let squareWidth = canvas.width / scale;
-let offsetX = squareWidth; //This offset will handle panning in the x-direction
-let offsetY = squareWidth; //This offset will handle panning in the x-direction
+export let squareWidth = canvas.width / scale;
+export let offsetX = squareWidth; //This offset will handle panning in the x-direction
+export let offsetY = squareWidth; //This offset will handle panning in the x-direction
 
 //Hold down variables
 let mouseDown = false;
