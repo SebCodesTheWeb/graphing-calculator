@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+:root {
+    --main-font: "Ubuntu Mono", monospace;
+}
+
+
 /* Default Styling  =================================================================*/
 
 * {
@@ -11,6 +17,9 @@
 	padding: 0;
 	margin: 0;
     box-sizing: border-box;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 ol, ul {
@@ -23,7 +32,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 body {
     line-height: 1.6em;
-    color: #333;
+    color: #EEE;
     background-color: #EEE;
     display: flex;
     flex-direction: column;
@@ -31,8 +40,58 @@ body {
     text-align: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "Monospace";
+    font-family: var(--main-font);
     cursor: crosshair;
 }   
 
-/* Canvas ================================================================= */
+/* Menu ================================================================= */
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    width: 25vw;
+    min-height: 100vh;
+    position: absolute;
+    left: 0;
+    border: 10px solid #555;
+    background-color: #333;
+    cursor: auto;
+}
+
+#title {
+    color: #EEE;
+    font-size: 3rem;
+    font-family: var(--main-font);
+    min-height: 3rem;
+    margin: 1em 0 0 0;
+}
+
+p, a {
+    color: #EEE;
+    font-size: 1.25rem;
+    margin-top: 1rem;
+}
+
+ul > li {
+    font-size: .9rem;
+    /* margin-top: 0.25em; */
+    text-align: left;
+    margin-left: 3rem;
+}
+
+.inputFunction, #evaluateButton {
+    font-family: var(--main-font);
+    font-size: 1.5rem;
+    min-height: 2rem;
+    padding: 0.5em 1em;
+}
+
+#evaluateButton {
+    cursor: pointer;
+    transition:cubic-bezier(0.39, 0.575, 0.565, 1) 150ms all;
+}
+
+#evaluateButton:hover {
+    opacity: 0.8;
+    transform: translateY(10px);
+}

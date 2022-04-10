@@ -8,9 +8,43 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="canvas.js" defer></script>
     <script type="module" src="plotgraph.js" defer></script>
+    <script type="module" src="parser.js" defer></script>
 
 </head>
 <body>
+    <div id="menu">
+        <h1 id="title">Lingebra</h1>
+        <input type="text" class="inputFunction" placeholder="Input Function (ex: 2x) ">
+        <button id="evaluateButton">Evaluate</button>
+        <p style="text-align: left; margin-left: 3rem; margin-bottom: 1rem;">You can use the following functions:</p>
+        <ul>
+            <li>sin(x) => Sine function</li>
+            <li>cos(x) => Cosine function</li>
+            <li>tan(x) => Tangent function</li>
+            <li>asin(x) => Inverse Sine function</li>
+            <li>acos(x) => Inverse Cosine function</li>
+            <li>atan(x) => inverse Tangent function</li>
+            <li>sinh(x) => Sine Hyperbolic function</li>
+            <li>cosh(x) => Cosine Hyperbolic function</li>
+            <li>tanh(x) => Tangent Hyperbolic function</li>
+            <li>pow(x, 2) => x to power of 2 function</li>
+            <li>sqrt(x) => Square Root function</li>
+            <li>cbrt(x) => Cube Root function</li>
+            <li>log(x) => Natural Log function</li>
+            <li>log2(x) => Log of 2 function</li>
+            <li>log10(x) => Log of 10 function</li>
+            <li>exp(x) => Exponential function (base e)</li>
+            <li>pow(2, x) => Exponential function (base 2)</li>
+            <li>abs(x) => Absolute Value function</li>
+            <li>ceil(x) => Ceiling function (returns closest integer)</li>
+            <li>random(x) => Random function (returns random float between 0 and 1)</li>
+            <li>sign(x) => Sign function  (returns 1 if positive, 0 otherwise)</li>
+            <li>E => constant e ≈ 2.718</li>
+            <li>PI => constant π ≈ 3.1415</li>
+        </ul>
+        <p>Coded by Sebastian Delgado</p>
+        <a style="margin-top: .5rem;" href="https://github.com/SebCodesTheWeb/graphing-calculator">Github</a>
+    </div>
     <canvas></canvas>
 </body>
 </html>
