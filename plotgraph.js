@@ -1,6 +1,5 @@
-import {c, canvas, squareWidth, offsetX, offsetY} from "./canvas.js";
-    // offsetX = 0;
-    // offsetY = 0; // Reset
+import {c, canvas, squareWidth, offsetX, offsetY, mouseDown} from "./canvas.js";
+
 
 const colors = ["#54F5B8", "#3963ED", "#F76223", "#6921ED", "#FA9F00", "#CD1DF5"];
 let listOfGraphs = [];
@@ -12,7 +11,9 @@ function randomColor() {
 
 function drawSelectedGraphs() {
     for(let i = 0; i < listOfGraphs.length; i++) {
+        c.beginPath();
         listOfGraphs[i].drawGraph();
+        c.beginPath();
     } 
 }
 
@@ -31,12 +32,23 @@ class Graph {
         c.strokeStyle = this.color;
         c.moveTo(0, this.centerY)
 
-        for(let i = -canvas.width/2; i < canvas.width/2; i++) {
+        //Setting offset to 0,0 in beginning
+        let addjustedoffsetX;
+        let addjustedoffsetY;
+        if(offsetX && offsetY == squareWidth) {
+            addjustedoffsetX = 0;
+            addjustedoffsetY = 0;
+        } else {
+            addjustedoffsetX = offsetX;
+            addjustedoffsetY = offsetY;
+        }
+
+        for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX; i++) {
             let rescaledYCoordinate = this.outputFunction(i/squareWidth)*squareWidth;
             let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
 
             if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
-                c.lineTo(i+this.centerX, convertedYCoordinate-this.centerY); //Generating line between coordinates
+                c.lineTo(i+this.centerX-addjustedoffsetX, convertedYCoordinate-this.centerY-addjustedoffsetY); //Generating line between coordinates
             } else {
                 c.stroke();
                 c.beginPath();
@@ -46,15 +58,25 @@ class Graph {
     }
 }
 
-// canvas.addEventListener("mousemove", function(e) {
+canvas.addEventListener("mousemove", function(e) {
+    // console.log(e.offsetX-canvas.width/2, e.offsetY-canvas.height/2);
+    if(!mouseDown) return;
+    drawSelectedGraphs();
+})
 
-// })
+canvas.addEventListener("wheel", function(e) {
+    drawSelectedGraphs();
+})
 
-// function update() {
-//     requestAnimationFrame(update);
-//     console.log(offsetX, offsetY);
-// }
-// update();
+window.addEventListener("resize", function(e) {
+    drawSelectedGraphs();
+})
+
+function update() {
+    requestAnimationFrame(update);
+    // console.log(offsetX, offsetY);
+}
+update();
 
 //Testing different Functions
 const sineCurve = new Graph((x) => Math.sin(x));
@@ -75,7 +97,7 @@ const modulus = new Graph((x) => x*x%x);
 const weirdShit = new Graph((x) => x<0?x*x*x%x:0);
 const random = new Graph((x) => Math.random() * x);
 
-listOfGraphs.push(sineCurve, line);
+listOfGraphs.push(sineCurve, line, naturalLog);
 drawSelectedGraphs();
 
 // random.drawGraph();

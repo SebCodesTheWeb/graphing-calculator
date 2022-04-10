@@ -9,13 +9,17 @@ let scaleY = 16; //The amount of boxes per column
 export let squareWidth = canvas.width / scale;
 export let offsetX = squareWidth; //This offset will handle panning in the x-direction
 export let offsetY = squareWidth; //This offset will handle panning in the x-direction
+offsetX = 0;
+offsetY = 0;
 
 //Hold down variables
-let mouseDown = false;
+export let mouseDown = false;
 let xPosAtClick;
 let yPosAtClick;
 let cursorXPos;
 let cursorYPos;
+let accumlatedX = 0;
+let accumlatedY = 0;
 
 let inverseX = false; //false = right movment, true = left movement
 let inverseY = false;
@@ -36,6 +40,8 @@ canvas.addEventListener("mousedown", function(e) {
 
 canvas.addEventListener("mouseup",function(e) {
     mouseDown = false;
+    accumlatedX = offsetX;
+    accumlatedY = offsetY;
 })
 
 canvas.addEventListener("mousemove", function(e) {
@@ -47,22 +53,23 @@ canvas.addEventListener("mousemove", function(e) {
     
     offsetX = (xPosAtClick - cursorXPos); // How much cursor has moved
     offsetY = (yPosAtClick - cursorYPos);
+    offsetX += accumlatedX; // Handles previous momement
+    offsetY += accumlatedY;
 
-    
     //Checking if was movement to right or left
     if(offsetX >= 0) {
-        scaleX = 16 + Math.ceil(offsetX / squareWidth);
+        scaleX = scale + Math.ceil(offsetX / squareWidth);
         inverseX = false
     } else {
-        scaleX = 16 + Math.ceil(-offsetX / squareWidth);
+        scaleX = scale + Math.ceil(-offsetX / squareWidth);
         inverseX = true;
     } 
     
     if(offsetY >= 0) {
-        scaleY = 16 + Math.ceil(offsetY / squareWidth);
+        scaleY = scale + Math.ceil(offsetY / squareWidth);
         inverseY = false;
     } else {
-        scaleY = 16 + Math.ceil(-offsetY / squareWidth);
+        scaleY = scale + Math.ceil(-offsetY / squareWidth);
         inverseY = true;
     }
 
@@ -73,8 +80,33 @@ canvas.addEventListener("mousemove", function(e) {
 //zoom
 canvas.addEventListener("wheel",function(e) {
     clearCanvas();
-    scale  += e.deltaY * 0.01; // e.deltaY is how much scroll
-    reset();
+
+    if(scale > 2) { // Max Zoom
+        scale  += e.deltaY * 0.01; // e.deltaY is how much scroll
+    } else if (e.deltaY < 0) {
+        return;
+    } else if (e.deltaY > 0) {
+        scale  += e.deltaY * 0.01; // e.deltaY is how much scroll
+    }
+    scaleX = scale + Math.ceil(offsetX / squareWidth);
+    scaleY = scale + Math.ceil(offsetY / squareWidth);
+
+    squareWidth = canvas.width / scale;
+
+    if(e.deltaY < 0 ) { // Zoom in
+        offsetX = offsetX + (offsetX/scale); //Relocating origin to offset
+        offsetY = offsetY + (offsetY/scale);
+        offsetX += (e.offsetX-canvas.width/2)/scale; //Changing focal point to cursor
+        offsetY += (e.offsetY-canvas.height/2)/scale;
+    } else { // Zoom out
+        offsetX = offsetX - (offsetX/scale); // Same but reverse
+        offsetY = offsetY - (offsetY/scale);
+        offsetX -= (e.offsetX-canvas.width/2)/scale;
+        offsetY -= (e.offsetY-canvas.height/2)/scale;
+    }
+
+    //Calculating the offset by zooming in:
+
     drawGrid();
 })
 
@@ -86,19 +118,22 @@ function reset() {
     squareWidth = canvas.width / scale;
     offsetX = squareWidth;
     offsetY = squareWidth;
+    console.log(extraoffsetX, extraoffsetY);
 }
 
 function drawGrid() {
     c.beginPath();
+    c.strokeStyle = "hsl(0, 0%, 0%, 0.5)";
+    c.lineWidth = 1;
 
     //Vertical Lines
     if(!inverseX) { // From left to right
-        for(let i = 0; i < scaleX; i++) {  
+        for(let i = -scaleX; i <= scaleX; i++) {  
             c.moveTo(squareWidth * i+(squareWidth-offsetX), 0); //squareWidth is space between columns and offset the cursor movement
             c.lineTo(squareWidth*i+(squareWidth-offsetX), canvas.height);
         }
     } else { // From right to left
-        for(let i = 16; i >= 16-scaleX; i--) {
+        for(let i = 16+scaleX; i >= 16-scaleX; i--) {
             c.moveTo(squareWidth * i+(squareWidth-offsetX), 0);
             c.lineTo(squareWidth*i+(squareWidth-offsetX), canvas.height);
         }
@@ -106,13 +141,12 @@ function drawGrid() {
 
     //Horizontal Lines
     if(!inverseY) {
-        for(let i = 0; i < scaleY; i++) {
+        for(let i = -scaleY; i < scaleY; i++) {
             c.moveTo(0, squareWidth * i+(squareWidth-offsetY));
             c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY));
         }
     } else {
-        console.log("up");
-        for(let i = 16; i >= 16-scaleY; i--) {
+        for(let i = 16+scaleY; i >= 16-scaleY; i--) {
             c.moveTo(0, squareWidth * i+(squareWidth-offsetY));
             c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY));
         }
