@@ -1,9 +1,17 @@
 import {c, canvas, squareWidth, offsetX, offsetY, mouseDown} from "./canvas.js";
 import Formula from "./parser.js";
+import clearCanvas from "./canvas.js";
 
 const colors = ["#54F5B8", "#3963ED", "#F76223", "#6921ED", "#FA9F00", "#CD1DF5"];
 let listOfGraphs = [];
 let listOfInputedGraphs = [];
+let savedFunctions = []; // List of inputted functions
+
+//For Resizing of Window
+const windowWidth = window.innerWidth;
+const windowHeight = window.innerHeight;
+let windowOffsetX = 0; 
+let windowOffsetY = 0;
 
 function randomColor() {
     let color = Math.ceil(Math.random() * colors.length);
@@ -12,12 +20,9 @@ function randomColor() {
 
 function drawSelectedGraphs() {
     for(let i = 0; i < listOfGraphs.length; i++) {
-        c.beginPath();
         listOfGraphs[i].drawGraph();
-        c.beginPath();
     } 
     for(let i = 0; i < listOfInputedGraphs.length; i++) {
-        c.beginPath();
         listOfInputedGraphs[i].drawInputedGraph();
     }
 }
@@ -79,8 +84,11 @@ class Graph {
             addjustedoffsetX = offsetX;
             addjustedoffsetY = offsetY;
         }
+        addjustedoffsetX += windowOffsetX/2;
+        addjustedoffsetY -= windowOffsetY/2;
+        console.log(windowOffsetX);
 
-        for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX; i++) {
+        for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX-windowOffsetX/2; i++) {
             let rescaledYCoordinate = this.formula.evaluate({x: i/squareWidth})*squareWidth;
             let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
 
@@ -93,12 +101,32 @@ class Graph {
         }
         c.stroke();
     }
+
+    yCoordinate(xCoordinate) {
+        let rescaledYCoordinate = this.formula.evaluate({x: (xCoordinate+offsetX)/squareWidth})*squareWidth;
+        let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
+        convertedYCoordinate -= this.centerY + offsetY;
+        return convertedYCoordinate;
+    }
 }
 
 canvas.addEventListener("mousemove", function(e) {
     // console.log(e.offsetX-canvas.width/2, e.offsetY-canvas.height/2);
+    windowOffsetX = windowWidth - window.innerWidth; // Setting the offset equal to difference in window size
+    windowOffsetY = windowHeight - window.innerHeight; // Setting the offset equal to difference in window 
+
+    // if(listOfInputedGraphs[0] != undefined) {
+    //     c.beginPath();
+    //     c.fillStyle = "#333";
+    //     let myY = listOfInputedGraphs[0].yCoordinate(e.clientX-157)
+    //     c.arc(e.clientX, myY, 5, 0, Math.PI * 2, false);
+    //     c.fill();
+    // }
     if(!mouseDown) return;
+
     drawSelectedGraphs();
+
+
 })
 
 canvas.addEventListener("wheel", function(e) {
@@ -106,17 +134,36 @@ canvas.addEventListener("wheel", function(e) {
 })
 
 window.addEventListener("resize", function(e) {
+    // clearCanvas();
     drawSelectedGraphs();
 })
 
 document.querySelector("#evaluateButton").addEventListener("click", function(e) {
-    let expression = document.querySelector(".inputFunction").value;
-    let newFormula = new Formula(expression);
-    let newGraph = new Graph((x) => x, newFormula);
-    newGraph.drawInputedGraph();
-    listOfInputedGraphs.push(newGraph);
+    let i = 0;
+    document.querySelectorAll(".inputFunction").forEach((element) => {
+        let newGraph = new Graph((x) => x, new Formula(element.value));
+        listOfInputedGraphs[i] = newGraph;
+        savedFunctions[i] = element.value;
+        i++;
+    })
+    drawSelectedGraphs();
 })
 
+document.querySelector("#add").addEventListener("click", function() {
+    document.querySelector("#inputs").innerHTML += `<input type="text" class="inputFunction" placeholder="Input">`
+    let i = 0;
+    document.querySelectorAll(".inputFunction").forEach((element) => {
+        if(savedFunctions[i] != undefined) {
+            element.value = savedFunctions[i];
+        }
+        i++;
+    })
+})
+
+function update() {
+    requestAnimationFrame(update);
+}
+update();
 
 
 
