@@ -9,14 +9,27 @@
     <script type="module" src="canvas.js" defer></script>
     <script type="module" src="plotgraph.js" defer></script>
     <script type="module" src="parser.js" defer></script>
+    <script type="module" src="numerical-analysis.js" defer></script>
 
 </head>
 <body>
     <div id="menu">
-        <h1 id="title">Lingebra</h1>
-        <input type="text" class="inputFunction" placeholder="Input Function (ex: 2x) ">
+        <h1 id="title">LinNeGebra</h1>
+        <div id="inputs">
+            <input type="text" class="inputFunction" placeholder="Input (ex: 2x) ">
+        </div>
+        <button id="add">+</button>
         <button id="evaluateButton">Evaluate</button>
-        <p style="text-align: left; margin-left: 3rem; margin-bottom: 1rem;">You can use the following functions:</p>
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem;">Tools:</p>
+        <div id="tools">
+            <input type="image" src="img/distanceTool.png" class="tool" id="distance">
+            <input type="image" src="img/distanceTool.png" class="tool" id="area">
+            <input type="image" src="img/distanceTool.png" class="tool" id="derivative">
+            <input type="image" src="img/distanceTool.png" class="tool" id="volume">
+            <input type="image" src="img/distanceTool.png" class="tool" id="difference">
+        </div>
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem;" id="info"></p>
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem;">You can use the following functions:</p>
         <ul>
             <li>sin(x) => Sine function</li>
             <li>cos(x) => Cosine function</li>
