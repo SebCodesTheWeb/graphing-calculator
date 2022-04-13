@@ -3,6 +3,7 @@ export const c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
+
 let scale = 16;
 let scaleX = 16; //The amount of boxes per row
 let scaleY = 16; //The amount of boxes per column
@@ -13,6 +14,7 @@ offsetX = 0;
 offsetY = 0;
 let counterOffSetX = 0; //for fixed objects
 let counterOffSetY = 0;
+export let rescale = (Math.log2(Math.floor(scale)) + 16);
 
 //Hold down variables
 export let mouseDown = false;
@@ -90,13 +92,19 @@ canvas.addEventListener("mousemove", function(e) {
 //zoom
 canvas.addEventListener("wheel",function(e) {
     clearCanvas();
-    
-    if(scale > 2) { // Max Zoom
-        scale  += e.deltaY * 0.01; // e.deltaY is how much scroll
-    } else if (e.deltaY < 0) {
-        return;
-    } else if (e.deltaY > 0) {
-        scale  += e.deltaY * 0.1; 
+
+    if(e.deltaY < 0 && scale > 1) { // zoom in
+        scale = scale / (Math.pow(2, 1/8));
+    } else if (e.deltaY < 0 && scale < 1) {
+        drawGrid();
+        drawAxis();
+        return
+    } else if (e.deltaY > 0 && scale < 10000000000) { // zoom out
+        scale = scale * Math.pow(2, 1/8);
+    } else if(e.deltaY > 0 && scale > 10000000000) { // zoom out
+        drawGrid();
+        drawAxis();
+        return
     }
 
     if(offsetX >= 0) {
@@ -112,26 +120,58 @@ canvas.addEventListener("wheel",function(e) {
     }
 
     squareWidth = canvas.width / scale;
+    rescale = (Math.log2(Math.floor(scale)) + 16);
 
     if(e.deltaY < 0 ) { // Zoom in
-        offsetX = offsetX + (offsetX/scale); //Relocating origin to offset
-        offsetY = offsetY + (offsetY/scale);
-        offsetX += (e.offsetX-canvas.width/2)/scale; //Changing focal point to cursor
-        offsetY += (e.offsetY-canvas.height/2)/scale;
-    } else { // Zoom out
-        offsetX = offsetX - (offsetX/scale); // Same but reverse
-        offsetY = offsetY - (offsetY/scale);
-        offsetX -= (e.offsetX-canvas.width/2)/scale;
-        offsetY -= (e.offsetY-canvas.height/2)/scale;
-    }
 
-    //Calculating the offset by zooming in:
+        //I had problems with zooming in perfectly at the cursor, but this zoom should be acceptable
+        offsetX *= Math.pow(2, 1/8); // Focal Point(this is perfect)
+        offsetY *= Math.pow(2, 1/8);  
+        offsetX += (e.offsetX-canvas.width/2)/(rescale/2);
+        offsetY += (e.offsetY-canvas.height/2)/(rescale/2); //Cursor movement(this is the problem, can't get it perfectly yet)
+        accumlatedX = offsetX;  //Calculating the offset of zooming in:
+        accumlatedY = offsetY;
+        
+        //What I have Tried: =================================================================
+        // offsetX = offsetX + (offsetX*0.1 / rescale)  //Relocating origin to offset
+        // offsetY = offsetY + (offsetY*0.1 / rescale); 
+        // offsetX += (e.offsetX-canvas.width/2); //Changing focal point to cursor
+        // offsetY += (e.offsetY-canvas.height/2);
+        // offsetX = offsetX + (offsetX)/scale; // Same but reverse
+        // offsetY = offsetY + (offsetY)/scale;
+        // offsetX += scale;
+        // otherX = otherX - (otherX)/rescale; // Same but reverse
+        // otherX -= (e.offsetX-canvas.width/2)/rescale;
+        // if(offsetX < 0) {
+            //     offsetX = -offsetX;
+            // }
+        // offsetX *= -1;
+        // offsetY *= -1;
+        // offsetX = offsetX - (offsetX)/rescale; // Setting Focal Point
+        // offsetY = offsetY - (offsetY)/rescale;
+        // offsetX -= (e.offsetX-canvas.width/2)/rescale; //Adjusting position for cursor
+        // offsetY -= (e.offsetY-canvas.height/2)/rescale;
+            
+        } else { // Zoom out(Same but reverse)
+        offsetX -= (e.offsetX-canvas.width/2)/(rescale/2);
+        offsetY -= (e.offsetY-canvas.height/2)/(rescale/2); 
+        offsetX /= Math.pow(2, 1/8); 
+        offsetY /= Math.pow(2, 1/8); // Scaling the offset by the amount that has scaled
+        accumlatedX = offsetX; 
+        accumlatedY = offsetY;
+    }
 
     drawGrid();
     drawAxis();
 })
 
-function clearCanvas() {
+document.querySelector("#evaluateButton").addEventListener("click", function() {
+    clearCanvas();
+    drawAxis();
+    drawGrid();
+})
+
+export function clearCanvas() {
     c.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -141,7 +181,9 @@ function reset() {
     offsetY = squareWidth;
 }
 
-function drawGrid() {
+export function drawGrid() {
+
+
     c.beginPath();
     c.strokeStyle = "hsl(0, 0%, 0%, 0.5)";
     c.lineWidth = 1;
@@ -158,37 +200,67 @@ function drawGrid() {
         gridOffsetY = ((16-scale) * (squareWidth/4 + 0.5));
     }
 
+    // if(16 % scale == 0) {
+    //     stepSize = scale/16;
+    // } 
+    // if (scale % 16 == 0) { 
+    //     stepSize = scale/16;
+    // }
 
-    //Vertical Lines
-    if(!inverseX) { // From left to right
-        for(let i = -scaleX; i <= scaleX; i++) {  
-            c.moveTo(squareWidth * i+(squareWidth-offsetX) + gridOffsetX, 0); //squareWidth is space between columns and offset the cursor movement
-            c.lineTo(squareWidth*i+(squareWidth-offsetX) + gridOffsetX, canvas.height);
-        }
-    } else { // From right to left
-        for(let i = 16+scaleX; i >= 16-scaleX; i--) {
-            c.moveTo(squareWidth * i+(squareWidth-offsetX) + gridOffsetX, 0);
-            c.lineTo(squareWidth*i+(squareWidth-offsetX) + gridOffsetX, canvas.height);
-        }
+    if(scale >= 16 && isPowerOfTwo(Math.floor(scale))) {
+        stepSize = Math.floor(scale/16);
+    } else if(16 % (Math.floor(scale)) == 0) {
+        stepSize = (Math.floor(scale))/16;
+    }
+    
+    for(let i = 0; i < scaleX; i+= stepSize) { // Vertical Lines on right side
+        c.moveTo(canvas.width/2 + squareWidth*i - offsetX, 0);
+        c.lineTo(canvas.width/2 + squareWidth*i - offsetX, canvas.height)
+    }
+    for(let i = 0; i > -scaleX; i-= stepSize) { // Vertical Lines on left side
+        c.moveTo(canvas.width/2 + squareWidth*i - offsetX, 0);
+        c.lineTo(canvas.width/2 + squareWidth*i - offsetX, canvas.height)
     }
 
-    //Horizontal Lines
-    if(!inverseY) {
-        for(let i = -scaleY; i < scaleY; i++) {
-            c.moveTo(0, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
-            c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
-        }
-    } else {
-        for(let i = 16+scaleY; i >= 16-scaleY; i--) {
-            c.moveTo(0, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
-            c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
-        }
+    for(let i = 0; i < scaleY; i+= stepSize) { // Horizontal Lines on bottom side
+        c.moveTo(0, canvas.height/2 + squareWidth*i - offsetY);
+        c.lineTo(canvas.width, canvas.height/2 + squareWidth*i - offsetY);
+    }
+    for(let i = 0; i > -scaleY; i-= stepSize) { // Horizontal Lines on bottom side
+        c.moveTo(0, canvas.height/2 + squareWidth*i - offsetY);
+        c.lineTo(canvas.width, canvas.height/2 + squareWidth*i - offsetY);
     }
 
     c.stroke();
+
+    
+    //Vertical Lines
+    // if(!inverseX) { // From left to right
+    //     for(let i = -scaleX; i <= scaleX; i++) {  
+    //         c.moveTo(squareWidth * i+(squareWidth-offsetX) + gridOffsetX, 0); //squareWidth is space between columns and offset the cursor movement
+    //         c.lineTo(squareWidth*i+(squareWidth-offsetX) + gridOffsetX, canvas.height);
+    //     }
+    // } else { // From right to left
+    //     for(let i = 16+scaleX; i >= 16-scaleX; i--) {
+    //         c.moveTo(squareWidth * i+(squareWidth-offsetX) + gridOffsetX, 0);
+    //         c.lineTo(squareWidth*i+(squareWidth-offsetX) + gridOffsetX, canvas.height);
+    //     }
+    // }
+    //Horizontal Lines
+    // if(!inverseY) {
+        //     for(let i = -scaleY; i < scaleY; i++) {
+            //         c.moveTo(0, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
+    //         c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
+    //     }
+    // } else {
+    //     for(let i = 16+scaleY; i >= 16-scaleY; i--) {
+    //         c.moveTo(0, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
+    //         c.lineTo(canvas.width, squareWidth * i+(squareWidth-offsetY) +squareWidth/5 - gridOffsetY);
+    //     }
+    // }
 }
 
-function drawAxis() {
+export function drawAxis() {
     c.beginPath();
     c.lineWidth = 1;
     c.strokeStyle = "#333";
@@ -204,27 +276,29 @@ function drawAxis() {
     c.beginPath();
     c.font = `${fontSize}px ${font}`;
     
-    if(16 % scale == 0) {
-        stepSize = scale/16;
-    } 
-    // if (scale % 16 == 0) { zoom out scale, fix later
+    // if(16 % scale == 0) {
+    //     stepSize = scale/16;
+    // } 
+    // if (scale % 16 == 0) { 
     //     stepSize = scale/16;
     // }
 
 
     //Fixes number line =================================
-    if(offsetX > 700) {
-        counterOffSetX=offsetX-canvas.width/2 +750
-    } else if (offsetX < -1400) {
+    let blockOffset = window.innerWidth * 0.225;
+
+    if(offsetX > blockOffset+40) { // Blockoffset is the sidebar
+        counterOffSetX=offsetX-canvas.width/2 +60 + blockOffset;
+    } else if (offsetX < -innerWidth/2+50) {
         counterOffSetX=offsetX+canvas.width/2 -50
     } else {
         counterOffSetX = 0;
     }
 
-    if(offsetY < -700) {
+    if(offsetY < -innerHeight/2+50) {
         counterOffSetY=offsetY+canvas.height/2 -50
-    } else if(offsetY > 700) {
-        counterOffSetY=offsetY-canvas.height/2 +50 
+    } else if(offsetY > innerHeight/2-50) {
+        counterOffSetY=offsetY-canvas.height/2 +50
     } else {
         counterOffSetY = 0;
     }
@@ -232,20 +306,62 @@ function drawAxis() {
     // if(scaleX % 2 != 0 && stepSize % 2 == 0) {scaleX++}; //Want even scale for proper scaling
     // if(scaleY % 2 != 0 && stepSize % 2 == 0) {scaleY++}; //Want even scale
 
-    for(let i = -scaleX; i <= scaleX; i+= stepSize) { // x-axis 
+    for(let i = 0; i <= Math.floor(scaleX+1); i+= stepSize) { // x-axis right
         if(i != 0) {
-            c.fillText(`${i}`, (canvas.width/2 + (squareWidth*i)-fontSize/4)-offsetX, (canvas.height/2+squareWidth/6)-offsetY + counterOffSetY);
+            let text;
+            if(i < 1) {
+                text = `${i.toFixed(3)}`;
+            } else {
+                text = `${i}`;
+            }
+            let textLength = c.measureText(text).width;
+            c.fillText(text, (canvas.width/2 + (squareWidth*i)-(textLength/2))-offsetX, (canvas.height/2 + fontSize/1)-offsetY + counterOffSetY);
         }
     }
-    for(let i = scaleY; i >= -scaleY; i-= stepSize) { // y-axis
+    for(let i = 0; i >= -scaleX-1; i-= stepSize) { // x-axis right
         if(i != 0) {
-            c.fillText(`${i}`, (canvas.width/2+squareWidth/20)-offsetX+counterOffSetX, (canvas.height/2 + (squareWidth*-i))-offsetY);
+            let text;
+            if(i > 1) {
+                text = `${i.toFixed(3)}`;
+            } else {
+                text = `${i}`;
+            }
+            let textLength = c.measureText(text).width;
+            c.fillText(text, (canvas.width/2 + (squareWidth*i)-(textLength/2))-offsetX, (canvas.height/2 + fontSize/1)-offsetY + counterOffSetY);
+        }
+    }
+
+    for(let i = 0; i >= Math.floor(-scaleY-1); i-= stepSize) { // y-axis bottom
+        if(i != 0) {
+            let text;
+            if(i > 1) {
+                text = `${i.toFixed(3)}`;
+            } else {
+                text = `${i}`;
+            }
+            let textLength = c.measureText(text).width;
+            c.fillText(text, (canvas.width/2-textLength-3)-offsetX+counterOffSetX, (canvas.height/2 + (squareWidth*-i))-offsetY+(fontSize/2));
+        }
+    }
+    for(let i = 0; i <= Math.floor(scaleY+1); i+= stepSize) { // y-axis top
+        if(i != 0) {
+            let text;
+            if(i < 1) {
+                text = `${i.toFixed(3)}`;
+            } else {
+                text = `${i}`;
+            }
+            let textLength = c.measureText(text).width;
+            c.fillText(text, (canvas.width/2-textLength-3)-offsetX+counterOffSetX, (canvas.height/2 + (squareWidth*-i))-offsetY+(fontSize/2));
         }
     }
 }
 
-drawAxis();
+function isPowerOfTwo(x) {
+    return Math.log2(x) % 1 === 0;
+}
 
+drawAxis();
 drawGrid();
 
 /* 
