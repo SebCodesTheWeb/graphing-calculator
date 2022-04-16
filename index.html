@@ -5,18 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lingebra</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link rel="stylesheet" href="style.css">
     <script type="module" src="canvas.js" defer></script>
     <script type="module" src="plotgraph.js" defer></script>
     <script type="module" src="parser.js" defer></script>
+    <script type="module" src="numerical-analysis.js" defer></script>
+    <script type="module" src="tools.js" defer></script>
 
 </head>
 <body>
     <div id="menu">
-        <h1 id="title">Lingebra</h1>
-        <input type="text" class="inputFunction" placeholder="Input Function (ex: 2x) ">
+        <div id="title-and-logo">
+            <h1 id="title">LinNeGebra</h1>
+            <img src="img/logo.png" alt="logo" width="50" id="logo">
+        </div>
+        <div id="inputs">
+            <input type="text" class="inputFunction" placeholder="Input" id="0">
+        </div>
+        <button id="add">+</button>
         <button id="evaluateButton">Evaluate</button>
-        <p style="text-align: left; margin-left: 3rem; margin-bottom: 1rem;">You can use the following functions:</p>
+        <div id="one-value-evaluate">
+            <label for="evaluateInput" id="evaluate-function">at x =</label>
+            <input type="text"  placeholder="" id="single-input">
+            <label for="evaluateInput" id="answer">=</label>
+        </div>
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem;">Tools:</p>
+        <div id="tools">
+            <input type="image" src="img/arrow.png" class="tool" id="standard">
+            <input type="image" src="img/arrow.png" class="tool" id="snap">
+            <input type="image" src="img/distance.png" class="tool" id="distance">
+            <input type="image" src="img/area.png" class="tool" id="area">
+            <input type="image" src="img/derivative.png" class="tool" id="derivative">
+            <input type="image" src="img/volume-and-surface-tool.png" class="tool" id="volume">
+            <input type="image" src="img/difference.png" class="tool" id="difference">
+            <input type="image" src="img/volume-and-surface-tool.png" class="tool" id="surface-area">
+            <input type="image" src="img/limit.png" class="tool" id="limit">
+            <input type="image" src="img/continuity-tool.png" class="tool" id="continuity">
+            <input type="image" src="img/roots.png" class="tool" id="root">
+            <input type="image" src="img/turning.png" class="tool" id="turning">
+        </div>
+
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem;" id="tool-info">Click on a tool to activate it</p>
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em;" id="info"></p>
+
+        <div id="performance-box">
+            <label for="performance">Performance Slider <br>(higher value = more accuracy but slower computer)</label>
+            <input type="range" id="performance-slider" value="10" min="1">
+            <label for="performance" id="performance-value" >10%</label>
+        </div>
+        <div id="decimal-box">
+            <label for="decimal-input">Round to </label>
+            <input type="number" id="decimal-input" value="2" min="0" max="15">
+            <label for="decimal-input">Decimals</label>
+        </div>        
+
+        <p style="text-align: left; margin-left: 2rem; margin-right: 2em; margin-bottom: 1rem; margin-top: 2rem; font-size: 1rem;">You can use the following functions:</p>
         <ul>
             <li>sin(x) => Sine function</li>
             <li>cos(x) => Cosine function</li>
@@ -43,8 +87,25 @@
             <li>PI => constant π ≈ 3.1415</li>
         </ul>
         <p>Coded by Sebastian Delgado</p>
-        <a style="margin-top: .5rem;" href="https://github.com/SebCodesTheWeb/graphing-calculator">Github</a>
+        <a style="margin-top: .5rem; margin-bottom: 1rem;" href="https://github.com/SebCodesTheWeb/graphing-calculator">Github</a>
     </div>
+    <!-- Live Code Editor -->
+    <textarea id="js" placeholder="JavaScript" spellcheck="false">
+//Write custom functions!
+function myGraph(x) {
+    
+    return x*x*x;
+}
+    </textarea>
+    <iframe id="code">
+    </iframe>
+    <script type="text/javascript">
+        const js = document.getElementById("js");
+        const code = document.getElementById("code");
+        function run() {
+        code.contentWindow.eval(js.value);
+        }
+    </script>
     <canvas></canvas>
 </body>
 </html>

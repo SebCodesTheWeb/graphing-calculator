@@ -44,26 +44,57 @@ body {
     cursor: crosshair;
 }   
 
+img {
+    width: 100%;
+    display: block;
+}
+
 /* Menu ================================================================= */
+
+#logo {
+    width: 50px;
+    
+}
+
+#title-and-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 6rem;
+    gap: 1em;
+}
 
 #menu {
     display: flex;
     flex-direction: column;
-    width: 25vw;
-    min-height: 100vh;
+    width: 22.5vw;
+    min-width: 200px;
+    /* min-height: 100vh; */
+    height: 100vh;
     position: absolute;
     left: 0;
-    border: 10px solid #555;
+    top: 0;
+    border: 5px solid #555;
     background-color: #333;
     cursor: auto;
+    overflow: scroll;
 }
-
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }  
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #555;
+}
+  
 #title {
     color: #EEE;
     font-size: 3rem;
     font-family: var(--main-font);
-    min-height: 3rem;
-    margin: 1em 0 0 0;
 }
 
 p, a {
@@ -73,25 +104,172 @@ p, a {
 }
 
 ul > li {
-    font-size: .9rem;
-    /* margin-top: 0.25em; */
+    font-size: .8rem;
+    line-height: 1.2rem;
     text-align: left;
-    margin-left: 3rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
-.inputFunction, #evaluateButton {
+.inputFunction, #evaluateButton, #add {
     font-family: var(--main-font);
     font-size: 1.5rem;
-    min-height: 2rem;
+    min-height: 3rem;
     padding: 0.5em 1em;
+}
+
+
+.inputFunction {
+    width: 100%;
+    border-bottom: 1px solid #333;
+}
+
+#single-input {
+    width: 30%;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    min-height: 2rem;
+    font-family: var(--main-font);
+    padding: .5em;
+}
+
+#result-single-evaluate {
+    outline: 1px solid #fff;
+}
+
+#one-value-evaluate {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    margin: 2rem 2rem 0 2rem;
+}
+
+#add {
+    text-align: left;
+    border: 1px dashed #333;
+    transition:cubic-bezier(0.39, 0.575, 0.565, 1) 150ms all;
+}
+
+#add:hover {
+    opacity: 0.8;
+    border: 1px dotted #333;
+    cursor: pointer;
 }
 
 #evaluateButton {
     cursor: pointer;
+    padding: .5em 0 1em 0;
     transition:cubic-bezier(0.39, 0.575, 0.565, 1) 150ms all;
+    margin-top: 3rem;
 }
 
 #evaluateButton:hover {
     opacity: 0.8;
-    transform: translateY(10px);
+    transform: translateY(5px);
 }
+
+/* Tools ================================================================= */
+#standard, #snap {
+    padding: 1em;
+}
+
+#tools {
+    display: flex;
+    max-width: 100%;
+    gap: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    flex-wrap: wrap;
+}
+
+.tool {
+    width: 50px;
+    background-color: #fff; 
+    border: 1px dotted #333;
+    transition: cubic-bezier(0.39, 0.575, 0.565, 1) 150ms all;
+    padding: 2px;
+}
+
+.tool:hover {
+    opacity: 0.9;
+    padding: .25rem;
+    border: 1px dashed #333;
+}
+
+#tool-info {
+    border: 2px dotted #555;
+    padding: .5em;
+    min-height: 150px;
+    font-family: var(--main-font);
+}
+
+#performance-box {
+    margin: 0 2rem;
+    min-height: 150px;
+    font-family: var(--main-font);
+}
+
+#performance-slider {
+    width: 100%;
+}
+
+/* #decimal-box {
+    margin-top: 1rem;
+} */
+
+#decimal-input {
+    padding: .35em;
+    border-radius: .25em;
+}
+
+#snap {
+    background-image: url("img/grid.png");
+}
+
+/* Live Code ================================================= */
+textarea {
+    width: 77.5%;
+    position: absolute;
+    left: 22.5%; 
+    /* 22.5% is thw width of the menu */
+    bottom: 0%;
+    padding: 1rem 2rem;
+    min-height: 22.5%;
+    /* 22.5% is to achieve perfect 16:9 ratio */
+    overflow: scroll;
+    display: inline-block;
+    background: #333;
+    border: 5px solid #555;
+
+    color: #fff;
+    font-family: var(--main-font);
+  }
+  
+  iframe {
+    bottom: 0;
+    height: 0;
+  }
+
+
+/* Media Queries ================================================= */
+@media screen and (min-width: 2000px) {
+    :root {
+        font-size: 1.5rem;
+    }
+}
+@media screen and (max-width: 2000px) {
+    :root {
+        font-size: 1rem;
+    }
+}
+@media screen and (max-width: 1500px) {
+    :root {
+        font-size: .75rem;
+    }
+}
+@media screen and (max-width: 1000px) {
+    :root {
+        font-size: .5rem;
+    }
+}
+

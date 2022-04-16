@@ -1,6 +1,7 @@
 /*
  * NOTE: This Parser was coded by: 
  * Alexander Schenkel- https://github.com/bylexus/fparse
+ * MIT LICENCE
  */
 
  const MATH_CONSTANTS = {
@@ -16,15 +17,8 @@
 
 export default class Formula {
     /**
-     * Creates a new Formula instance
-     *
-     * Optional configuration can be set in the options object:
-     *
-     * - memoization (bool): If true, results are stored and re-used when evaluate() is called with the same parameters
-     *
      * @param {String} fStr The formula string, e.g. 'sin(x)/cos(y)'
      * @param {Object} options An options object. Supported options:
-     *    - memoization (bool): If true, results are stored and re-used when evaluate() is called with the same parameters
      * @param {Formula} parentFormula Internally used to build a Formula AST
      */
     constructor(fStr, options = {}) {
@@ -42,8 +36,6 @@ export default class Formula {
     }
 
     /**
-     * Re-sets the given String and parses it to a formula expression. Can be used after initialization,
-     * to re-use the Formula object.
      *
      * @param {String} formulaString The formula string to set/parse
      * @return {this} The Formula object (this)
@@ -75,11 +67,7 @@ export default class Formula {
         this._memory = {};
     }
 
-    /**
-     * Splits the given string by ',', makes sure the ',' is not within
-     * a sub-expression
-     * e.g.: str = "x,pow(3,4)" returns 2 elements: x and pow(3,4).
-     */
+ 
     splitFunctionParams(toSplit) {
         // do not split on ',' within matching brackets.
         let pCount = 0,
@@ -112,10 +100,7 @@ export default class Formula {
         return params;
     }
 
-    /**
-     * Cleans the input string from unnecessary whitespace,
-     * and replaces some known constants:
-     */
+ 
     cleanupInputString(s) {
         s = s.replace(/[\s]+/g, '');
         // surround known math constants with [], to parse them as named variables [xxx]:
@@ -126,42 +111,6 @@ export default class Formula {
     }
 
     /**
-     * Parses the given formula string by using a state machine into a single Expression object,
-     * which represents an expression tree (aka AST).
-     *
-     * First, we split the string into 'expression': An expression can be:
-     *   - a number, e.g. '3.45'
-     *   - an unknown variable, e.g. 'x'
-     *   - a single char operator, such as '*','+' etc...
-     *   - a named variable, in [], e.g. [myvar]
-     *   - a function, such as sin(x)
-     *   - a parenthessed expression, containing other expressions
-     *
-     * We want to create an expression tree out of the string. This is done in 2 stages:
-     * 1. form single expressions from the string: parse the string into known expression objects:
-     *   - numbers/variables
-     *   - operators
-     *   - braces (with a sub-expression)
-     *   - functions (with sub-expressions (aka argument expressions))
-     *   This will lead to an array of expressions.
-     *  As an example:
-     *  "2 + 3 * (4 + 3 ^ 5) * sin(PI * x)" forms an array of the following expressions:
-     *  `[2, +, 3, *, bracketExpr(4,+,3,^,5), * , functionExpr(PI,*,x)]`
-     * 2. From the raw expression array we form an expression tree by evaluating the expressions in the correct order:
-     *    e.g.:
-     *  the expression array `[2, +, 3, *, bracketExpr(4,+,3,^,5), * , functionExpr(PI,*,x)]` will be transformed into the expression tree:
-     *  ```
-     *         root expr:  (+)
-     *                     / \
-     *                    2    (*)
-     *                        / \
-     *                     (*)  functionExpr(...)
-     *                     / \
-     *                    3   (bracket(..))
-     * ```
-     *
-     * In the end, we have a single root expression node, which then can be evaluated in the evaluate() function.
-     *
      * @param {String} str The formula string, e.g. '3*sin(PI/x)'
      * @returns {Expression} An expression object, representing the expression tree
      */
@@ -190,17 +139,12 @@ export default class Formula {
         while (act <= lastChar) {
             switch (state) {
                 case 0:
-                    // None state, the beginning. Read a char and see what happens.
                     char = str.charAt(act);
                     if (char.match(/[0-9.]/)) {
-                        // found the beginning of a number, change state to "within-number"
                         state = 'within-nr';
                         tmp = '';
                         act--;
                     } else if (this.isOperator(char)) {
-                        // Simple operators. Note: '-' must be treaten specially,
-                        // it could be part of a number.
-                        // it MUST be part of a number if the last found expression
                         // was an operator (or the beginning):
                         if (char === '-') {
                             if (expressions.length === 0 || this.isOperatorExpr(expressions[expressions.length - 1])) {
@@ -224,17 +168,13 @@ export default class Formula {
                         tmp = '';
                         pCount = 0;
                     } else if (char === '[') {
-                        // left named var separator char found, seems to be the beginning of a named var:
                         state = 'within-named-var';
                         tmp = '';
                     } else if (char.match(/[a-zA-Z]/)) {
-                        // multiple chars means it may be a function, else its a var which counts as own expression:
                         if (act < lastChar && str.charAt(act + 1).match(/[a-zA-Z0-9_]/)) {
                             tmp = char;
                             state = 'within-func';
                         } else {
-                            // Single variable found:
-                            // We need to check some special considerations:
                             // - If the last char was a number (e.g. 3x), we need to create a multiplication out of it (3*x)
                             if (
                                 expressions.length > 0 &&
@@ -305,14 +245,11 @@ export default class Formula {
                 case 'within-func-parentheses':
                     char = str.charAt(act);
                     if (char === ')') {
-                        //Check if this is the matching closing parenthesis.If not, just read ahead.
                         if (pCount <= 0) {
                             // Yes, we found the closing parenthesis, create new sub-expression:
                             if (state === 'within-parentheses') {
                                 expressions.push(new BracketExpression(this._do_parse(tmp)));
                             } else if (state === 'within-func-parentheses') {
-                                // Function found: create expressions from the inner argument
-                                // string, and create a function expression with it:
                                 let args = this.splitFunctionParams(tmp).map((a) => this._do_parse(a));
                                 expressions.push(new FunctionExpression(funcName, args, this));
                                 funcName = null;
@@ -344,10 +281,6 @@ export default class Formula {
 
     /**
      * @see parse(): Builds an expression tree from the given expression array.
-     * Builds a tree with a single root expression in the correct order of operator precedence.
-     *
-     * Note that the given expression objects are modified and linked.
-     *
      * @param {*} expressions
      * @return {Expression} The root Expression of the built expression tree
      */
@@ -436,11 +369,7 @@ export default class Formula {
     }
 
     /**
-     * Evaluates a Formula by delivering values for the Formula's variables.
-     * E.g. if the formula is '3*x^2 + 2*x + 4', you should call `evaulate` as follows:
-     *
-     * evaluate({x:2}) --> Result: 20
-     *
+
      * @param {Object|Array} valueObj An object containing values for variables and (unknown) functions,
      *   or an array of such objects: If an array is given, all objects are evaluated and the results
      *   also returned as array.
@@ -634,7 +563,6 @@ class FunctionExpression extends Expression {
         params = params || {};
         const paramValues = this.argumentExpressions.map((a) => a.evaluate(params));
 
-        // If the params object itself has a function definition with
         // the function name, call this one:
         if (params[this.fn] instanceof Function) {
             return params[this.fn].apply(this, paramValues);
@@ -666,8 +594,6 @@ class VariableExpression extends Expression {
 
     evaluate(params = {}) {
         // params contain variable / value pairs: If this object's variable matches
-        // a varname found in the params, return the value.
-        // eg: params = {x: 5,y:3}, varname = x, return 5
         if (params[this.varName] !== undefined) {
             return Number(params[this.varName]);
         } else {
