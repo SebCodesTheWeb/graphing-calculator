@@ -49,6 +49,21 @@ img {
     display: block;
 }
 
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.25em;
+}
+
+sub  {
+    bottom: -0.25em;
+}
+
 /* Menu ================================================================= */
 
 #logo {
@@ -228,7 +243,7 @@ ul > li {
 
 /* Live Code ================================================= */
 textarea {
-    width: 77.5%;
+    width: 31.25%;
     position: absolute;
     left: 22.5%; 
     /* 22.5% is thw width of the menu */
@@ -250,6 +265,56 @@ textarea {
     height: 0;
   }
 
+  #matrix {
+      position: absolute;
+      left: 53.75%;
+      width: 15%;
+      bottom: 0;
+      padding: .5rem 2rem;
+      overflow: scroll;
+      display: inline-block;
+      background: #333;
+      border: 5px solid #555;
+      max-height: 22.5%;
+      color: #fff;
+      font-family: var(--main-font);
+  }
+
+  .matrix-input, #reset {
+      max-width: 3rem;
+      padding: .25em;
+      border-radius: .5em;
+  }
+
+  #matrix-inputs {
+      display: flex;
+      gap: 1em;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      max-width: 10rem;
+      justify-content: center;  
+  }
+
+  #diff {
+    position: absolute;
+    left: 68.75%;
+    width: 31.25%;
+    bottom: 0;
+    padding: 1rem 2rem;
+    overflow: scroll;
+    display: inline-block;
+    background: #333;
+    border: 5px solid #555;
+    min-height: 22.5%;
+    color: #fff;
+    font-family: var(--main-font); 
+  }
+
+  #reset {
+      margin-top: 1em;
+      font-family: var(--main-font);
+      font-size: 1rem;
+  }
 
 /* Media Queries ================================================= */
 @media screen and (min-width: 2000px) {

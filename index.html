@@ -12,6 +12,7 @@
     <script type="module" src="parser.js" defer></script>
     <script type="module" src="numerical-analysis.js" defer></script>
     <script type="module" src="tools.js" defer></script>
+    <script type="module" src="diff.js" defer></script>
 
 </head>
 <body>
@@ -96,7 +97,7 @@ function myGraph(x) {
     
     return x*x*x;
 }
-    </textarea>
+    </textarea>    
     <iframe id="code">
     </iframe>
     <script type="text/javascript">
@@ -106,6 +107,27 @@ function myGraph(x) {
         code.contentWindow.Function(js.value); 
         }
     </script>
+
+<!-- Input for linear transformations -->
+<div id="matrix">
+    <h2 style="margin-bottom: 0em;">Input Linear Transformation</h2>
+    <label for="base-e-x" id="ex" style="margin-right: 3em;">e<sub>x</sub></label>
+    <label for="base-e-x" id="ey">e<sub>y</sub></label>
+        <div id="matrix-inputs">
+
+            <input type="number" class="matrix-input" value="1" id="input-0">
+            <input type="number" class="matrix-input" value="0" id="input-1">
+            
+            <input type="number" class="matrix-input" value="0" id="input-2">
+            <input type="number" class="matrix-input" value="1" id="input-3">
+        </div>
+        <button id="reset">Reset</button>
+    </div>
+
+<!-- Differential Equations -->
+<div id="diff"> 
+<h2>Differential Equations</h2>
+</div>   
     <canvas></canvas>
 </body>
 </html>

@@ -26,7 +26,8 @@ export let decimalsUsed = 2;
 export let selectedFunction = 0;
 
 
-let transformationMatrix = [3, 4, 0, 1];
+let transformationMatrix = [1, 0, 0, 1];
+let transformationApplied = false;
 //takes in a point and applies the transformation
 function getTransformedCoordinates(x, y) {
     let a = x * transformationMatrix[0]
@@ -68,61 +69,113 @@ export default class Graph {
     }
 
     drawGraph() {
+        // c.beginPath();
+        // c.lineWidth = this.lineWidth;
+        // c.strokeStyle = this.color;
+        // c.moveTo(0, this.centerY)
+
+        // //Setting offset to 0,0 in beginning
+        // let addjustedoffsetX;
+        // let addjustedoffsetY;
+        // if(offsetX && offsetY == squareWidth) {
+        //     addjustedoffsetX = 0;
+        //     addjustedoffsetY = 0;
+        // } else {
+        //     addjustedoffsetX = offsetX;
+        //     addjustedoffsetY = offsetY;
+        // }
+
+        // for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX; i++) {
+        //     let rescaledYCoordinate = this.outputFunction((i)/squareWidth)*squareWidth;
+        //     let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
+
+        //     if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
+        //         c.lineTo(i+this.centerX-addjustedoffsetX, convertedYCoordinate-this.centerY-addjustedoffsetY); //Generating line between coordinates
+        //     } else {
+        //         c.stroke();
+        //         c.beginPath();
+        //     }
+        // }
+        // c.stroke();
         c.beginPath();
         c.lineWidth = this.lineWidth;
         c.strokeStyle = this.color;
         c.moveTo(0, this.centerY)
 
-        //Setting offset to 0,0 in beginning
-        let addjustedoffsetX;
-        let addjustedoffsetY;
-        if(offsetX && offsetY == squareWidth) {
-            addjustedoffsetX = 0;
-            addjustedoffsetY = 0;
-        } else {
-            addjustedoffsetX = offsetX;
-            addjustedoffsetY = offsetY;
-        }
+        for(let i = -canvas.width/2+offsetX; i < canvas.width/2+offsetX; i++) {
+            // Firstly get math new math coordinates from matrix
+            let xInput = (i/squareWidth)
+            let yInput = this.outputFunction((xInput))
+            let newCoordinates = getTransformedCoordinates(xInput, yInput);
+            let transformedX = newCoordinates[0];
+            let transformedY = newCoordinates[1];
 
-        for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX; i++) {
-            let rescaledYCoordinate = this.outputFunction((i)/squareWidth)*squareWidth;
-            let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
+            //Then get the canvas coordinates to draw
+            let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
+            let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
 
-            if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
-                c.lineTo(i+this.centerX-addjustedoffsetX, convertedYCoordinate-this.centerY-addjustedoffsetY); //Generating line between coordinates
+            if(!isNaN(canvasY)) { // Only draw if point is defined
+                c.lineTo(canvasX, canvasY); //Generating line between coordinates
             } else {
+                c.closePath();
                 c.stroke();
                 c.beginPath();
             }
         }
+        c.closePath();
         c.stroke();
     }
 
     drawInputedGraph() {
+        // c.beginPath();
+        // c.lineWidth = this.lineWidth;
+        // c.strokeStyle = this.color;
+        // c.moveTo(0, this.centerY)
+
+        // //Setting offset to 0,0 in beginning
+        // let addjustedoffsetX;
+        // let addjustedoffsetY;
+        // if(offsetX && offsetY == squareWidth) {
+        //     addjustedoffsetX = 0;
+        //     addjustedoffsetY = 0;
+        // } else {
+        //     addjustedoffsetX = offsetX;
+        //     addjustedoffsetY = offsetY;
+        // }
+        // addjustedoffsetX += windowOffsetX/2;
+        // addjustedoffsetY -= windowOffsetY/2;
+
+        // for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX-windowOffsetX/2; i++) {
+        //     let rescaledYCoordinate = this.formula.evaluate({x: i/squareWidth})*squareWidth;
+        //     let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
+
+        //     if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
+        //         c.lineTo(i+this.centerX-addjustedoffsetX, convertedYCoordinate-this.centerY-addjustedoffsetY); //Generating line between coordinates
+        //     } else {
+        //         c.stroke();
+        //         c.beginPath();
+        //     }
+        // }
+        // c.stroke();
         c.beginPath();
         c.lineWidth = this.lineWidth;
         c.strokeStyle = this.color;
         c.moveTo(0, this.centerY)
-
-        //Setting offset to 0,0 in beginning
-        let addjustedoffsetX;
-        let addjustedoffsetY;
-        if(offsetX && offsetY == squareWidth) {
-            addjustedoffsetX = 0;
-            addjustedoffsetY = 0;
-        } else {
-            addjustedoffsetX = offsetX;
-            addjustedoffsetY = offsetY;
-        }
-        addjustedoffsetX += windowOffsetX/2;
-        addjustedoffsetY -= windowOffsetY/2;
-
-        for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX-windowOffsetX/2; i++) {
-            let rescaledYCoordinate = this.formula.evaluate({x: i/squareWidth})*squareWidth;
-            let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
-
-            if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
-                c.lineTo(i+this.centerX-addjustedoffsetX, convertedYCoordinate-this.centerY-addjustedoffsetY); //Generating line between coordinates
+    
+        for(let i = -canvas.width/2+offsetX; i < canvas.width/2+offsetX; i++) {
+            // Firstly get math new math coordinates from matrix
+            let xInput = (i/squareWidth);
+            let yInput = this.formula.evaluate({x: xInput});
+            let newCoordinates = getTransformedCoordinates(xInput, yInput);
+            let transformedX = newCoordinates[0];
+            let transformedY = newCoordinates[1];
+    
+            //Then get the canvas coordinates to draw
+            let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
+            let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
+    
+            if(!isNaN(canvasY)) { // Only draw if point is defined
+                c.lineTo(canvasX, canvasY); //Generating line between coordinates
             } else {
                 c.stroke();
                 c.beginPath();
@@ -231,7 +284,7 @@ canvas.addEventListener("mousemove", function(e) {
     // console.log(e.offsetX-canvas.width/2, e.offsetY-canvas.height/2);
     windowOffsetX = windowWidth - window.innerWidth; // Setting the offset equal to difference in window size
     windowOffsetY = windowHeight - window.innerHeight; // Setting the offset equal to difference in window
-    if(anyToolActivated) {
+    if(anyToolActivated && !transformationApplied) {
         drawDot(e);
         drawSavedDots();
     }
@@ -585,8 +638,10 @@ function limitNumberOfDotsTo(limit, newDot) {
 
 canvas.addEventListener("wheel", function(e) {
     // listOfSavedDots = [];
-    drawSelectedGraphs();
-    drawDot(e);
+    if(!transformationApplied) {
+        drawSelectedGraphs();
+        drawDot(e);
+    }
     // drawSavedDots();
 })
 
@@ -761,6 +816,46 @@ function logFunction() {
 logFunction();
 
 
+//Taking input for matrix to apply linear transformations(scale, rotate, translate, skew)
+document.querySelectorAll(".matrix-input").forEach(matrixInput => {
+    matrixInput.addEventListener("change", function() {
+        switch(matrixInput.id) {
+            case "input-0": 
+                transformationMatrix[0] = parseInt(matrixInput.value);
+                break;
+            case "input-1": 
+                transformationMatrix[1] = parseInt(matrixInput.value);
+                break;
+            case "input-2": 
+                transformationMatrix[2] = parseInt(matrixInput.value);
+                break;
+            case "input-3": 
+                transformationMatrix[3] = parseInt(matrixInput.value);
+                break;
+        }
+        transformationApplied = true;
+        clearCanvas();
+        drawAxis();
+        drawGrid();
+        drawSelectedGraphs();
+    })
+})
+
+document.querySelector("#reset").addEventListener("click", function() {
+    transformationMatrix = [1, 0, 0, 1];
+    transformationApplied = false;
+    document.querySelector("#input-0").value = 1;
+    document.querySelector("#input-1").value = 0;
+    document.querySelector("#input-2").value = 0;
+    document.querySelector("#input-3").value = 1;
+
+    clearCanvas();
+    drawAxis();
+    drawGrid();
+    drawSelectedGraphs();
+})
+
+
 //Numerical Analysis Tester =================================================
 // function update() {
 //     requestAnimationFrame(update);
@@ -873,7 +968,7 @@ return hybridCombo(x-2) -Math.log(x);
 
 // random.drawGraph();
 // exponential.drawGraph()
-// stairCase.drawGraph();
+// stairCase.drawTransformedGrsaph();
 // inverseHyperbolic.drawGraph();
 // hyperbolic.drawGraph();
 // weirdShit.drawGraph();
