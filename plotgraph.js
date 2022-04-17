@@ -26,6 +26,23 @@ export let decimalsUsed = 2;
 export let selectedFunction = 0;
 
 
+let transformationMatrix = [3, 4, 0, 1];
+//takes in a point and applies the transformation
+function getTransformedCoordinates(x, y) {
+    let a = x * transformationMatrix[0]
+    let b = x * transformationMatrix[1]
+    let c = y * transformationMatrix[2]
+    let d = y * transformationMatrix[3]
+
+    let newX = a + c;
+    let newY = b + d;
+
+    return [newX, newY];
+}
+
+console.log(getTransformedCoordinates(1, 3))
+
+
 function randomColor() {
     let color = Math.ceil(Math.random() * colors.length);
     return colors[color];
@@ -68,7 +85,7 @@ export default class Graph {
         }
 
         for(let i = -canvas.width/2+addjustedoffsetX; i < canvas.width/2+addjustedoffsetX; i++) {
-            let rescaledYCoordinate = this.outputFunction(i/squareWidth)*squareWidth;
+            let rescaledYCoordinate = this.outputFunction((i)/squareWidth)*squareWidth;
             let convertedYCoordinate = canvas.height- rescaledYCoordinate; //y coordinate between canvas
 
             if(!isNaN(convertedYCoordinate)) { // Only draw if point is defined
@@ -113,6 +130,35 @@ export default class Graph {
         }
         c.stroke();
     }
+
+    drawTransformedGraph() {
+        c.beginPath();
+        c.lineWidth = this.lineWidth;
+        c.strokeStyle = this.color;
+        c.moveTo(0, this.centerY)
+
+        for(let i = -canvas.width/2+offsetX; i < canvas.width/2+offsetX; i++) {
+            // Firstly get math new math coordinates from matrix
+            let xInput = (i/squareWidth)
+            let yInput = this.outputFunction((xInput))
+            let newCoordinates = getTransformedCoordinates(xInput, yInput);
+            let transformedX = newCoordinates[0];
+            let transformedY = newCoordinates[1];
+
+            //Then get the canvas coordinates to draw
+            let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
+            let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
+
+            if(!isNaN(canvasY)) { // Only draw if point is defined
+                c.lineTo(canvasX, canvasY); //Generating line between coordinates
+            } else {
+                c.stroke();
+                c.beginPath();
+            }
+        }
+        c.stroke();
+    }
+
     
 
     yCoordinate(xCoordinate) {
@@ -707,6 +753,7 @@ compile();
 function logFunction() {
   if(typeof inputedFunction === "function") {
     let userGraph = new Graph((x) => inputedFunction(x));
+    userGraph.drawTransformedGraph();
     listOfGraphs.push(userGraph);
     drawSelectedGraphs();
   }
@@ -782,7 +829,7 @@ function riemannZetaFunction(x) {
     return sum;
 };
 
-function getFactorial(x) {
+function getFactorial(x) { //iterative version seemed to work better to graph
     let product = x;
     let i = x-1;
     while (i > 1) {
@@ -792,7 +839,7 @@ function getFactorial(x) {
     return product;
 }
 
-function papaLambertsWFunction(x) {
+function papaLambertsWFunction(x) { //Allt these are variations of the real function
     if(Math.abs(x) > 5) return;
     let sum = 0;
     for(let i = 1; i < 6; i++) {
@@ -805,7 +852,20 @@ function myGraph(x) { //one of my personal favourites
     return theSebastianDFunction(x) % weisterassFunction(x)  * modulus(x)   ;
 }
 
-console.log(papaLambertsWFunction(1));
+function hybridCombo(x) {
+    
+    if(x < 2) {
+return Math.cbrt(x);
+}
+
+return hybridCombo(x-2) -Math.log(x);
+}
+
+
+    
+
+
+
 
 
 // listOfGraphs.push(inputedFunction);

@@ -103,7 +103,7 @@ function myGraph(x) {
         const js = document.getElementById("js");
         const code = document.getElementById("code");
         function run() {
-        code.contentWindow.eval(js.value);
+        code.contentWindow.Function(js.value); 
         }
     </script>
     <canvas></canvas>
