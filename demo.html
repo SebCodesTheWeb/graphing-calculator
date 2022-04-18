@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeLine Demo</title>
+    <link rel="icon" type="image/x-icon" href="img/logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="demo-page">
+    <h1 style="font-size: 3rem; margin-bottom: 2rem;">Welcome to NeLine</h1>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/9YffrCViTVk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div id="info-demo">
+        <p>What is NeLine? <br> NeLine is a graphing calculator. It can plot graps from single-variable functions, and make numerical approximations, such as estimating the area under the graph. It can also take in custom functions in code, solve differential equations and visualize linear transformations.</p>
+        <p>Who Made NeLine? <br> NeLine was made by me, Sebastian Delgado, as a side project. After taking a class in Linear Algebra and Differential Equations, I tried to solve some differential equations and do linear transformations with code, but it looked horrible. It was hard to graph functions. So I figured why not make an entire graphing calculator, so that I had a solid basis for which I could graph functions and do numerical approximations in the future.</p>
+        <p>Why NeLine? <br> If you ever have a non elementary function like for example the weierstrass funciton, that can not be graphed in any other graphing-calculator such as demos or geogebra, then you can code the function straight into NeLine</p>
+        <p>How to graph functions? <br> Input a function to the menu to the left (ex: x), note: only type "x" and not "y=x"! Then press "evaluate" to graph the function. You can graph multiple functions by pressing the + button. If you  want to use a function like "sin(x)", simply type in "sin(x)". There is a list on the bottom of the menu of the funcitons that you can use</p>
+        <p>How to do numerical approximations? <br> There is a toolbar with multiple tools, click on a tool of your choosing, then select a point on the graph by double clicking it, move the cursor and double click on another point to get the result of the tools calculations. You can change the performance, and amount of decimals used in the numerical approximations in the performance slider below the toolbar</p>
+        <p>How to Input Custom Code? <br> In the lower menu to left you have an input box with live editable javascript code, the function "myGraph" is the one that will be graphed. Enter a return value that returns a number depending on the variable x. If you scroll a bit you will find a lot of cool pre-made functions that you can try. </p>
+        <p>How to Solve Differential Equations? <br> in the live editable javascript code, under the function "diffEquation(x, y)", input a return value, that returns the derivtive given a point with the coordinates(x, y). In the lower right corner, you will find another menu titled "Differential Equations", here you can change the step size(accuracy), and a starting position. The program uses three different numerical methods, Eulers method, the midpoint method and Runge Kutta 4th order method, so you can compare how the different methods differ.</p>
+        <p>How to apply Linear Transformations? <br> In the menu down called "Input Linear Transformation", you can enter a 2x2 matrix. This will immidatily visualize the linear transformation. Make sure to click reset when done.</p>
+        <p>How does NeLine work? <br> NeLine is a relatively complex program with over 3500 lines of code. For a more in depht-technical view you can view the code on github and view my comments. On an overall basis however, this is how it works:<br> <br>
+        
+        It's built on JavaScript, HTML, CSS with no frameworks.
+        (It does however use a script by Alexander Schrödinger that parses user input)
+        It uses the canvas API to display everything. By first computing everything in normal Math coordinates, and then converting them to the correct canvas coordinates. It uses a scale and squarewidth variable to control the sizing of the graphs, and an offset, which changes the position of things to give the illusion of motion when panning. <br><br>
+
+        To graph function, it takes in user input and turns it into a function, it then iterates a certain amount of x values in the visable window, and the computes the corresponding y-value given the inputed function. It then computes an array of points, and draws lines between these points to graph the function.<br><br>
+
+        The toolbar uses all numerical methods. By turning down the performance slider you can se how each method works, but they are almost all based on adding up or subtracting very small pieces of the graph.<br><br>
+
+        The custom code was built using an iframe and javascript .function /.eval to get the user function. <br><br>
+
+        The Linear Transformations work by having an array stored with the different values for the basis vectors. Before each point is being drawn it computes the new transformed point by multiplying the matrix by the points corresponding vector. <br><br>
+
+        The Differential Equations uses three different nummerical methods. They are all used to solve 1st order differential equations. You can google more yourself, but they are all based on calculating the derivative at a starting point, and then taking a small step along the derivative, and then calculating the next derivative and contiuing until a graphs has been drawn(eulers method). 
+        
+        </p>
+    </div>
+</body>
+</html>

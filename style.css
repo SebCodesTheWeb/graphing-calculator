@@ -148,7 +148,7 @@ ul > li {
 }
 
 .diff-input {
-    width: 3rem;
+    width: 4rem;
     padding: .25em;
     font-family: var(--main-font);
     border-radius: 5px;
@@ -202,6 +202,30 @@ ul > li {
 #evaluateButton:hover {
     opacity: 0.8;
     transform: translateY(5px);
+}
+
+/* Demo */
+#demo {
+    position: absolute;
+    background-color: #333;
+    top: 0;
+    right: 3em;
+    padding: .5em;
+    opacity: .75;
+}
+
+#demo:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+#demo-page{
+    background-color: #333;
+}
+
+#info-demo {
+    max-width: 60em;
+    line-height: 1.6em;
 }
 
 /* Tools ================================================================= */
@@ -281,7 +305,7 @@ textarea {
     font-family: var(--main-font);
   }
   
-  iframe {
+  #code {
     bottom: 0;
     height: 0;
   }
@@ -371,6 +395,8 @@ textarea {
       margin-left: .25em;
       border: 5px solid red;
   }
+
+  
 
 /* Media Queries ================================================= */
 @media screen and (min-width: 2000px) {
