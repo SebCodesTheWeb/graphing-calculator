@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lingebra</title>
+    <title>LinNeGebra</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link rel="stylesheet" href="style.css">
     <script type="module" src="canvas.js" defer></script>
@@ -97,6 +97,11 @@ function myGraph(x) {
     
     return x*x*x;
 }
+
+function diffEquation(x, y) {
+
+    return Math.sin(x);
+}
     </textarea>    
     <iframe id="code">
     </iframe>
@@ -126,7 +131,25 @@ function myGraph(x) {
 
 <!-- Differential Equations -->
 <div id="diff"> 
-<h2>Differential Equations</h2>
+    <h2>Differential Equations</h2>
+    
+<div id="inputs-diff">
+    <!-- <div id="main-diff-input">
+        <label for="diffInput">dy/dx = </label><input type="text" id="diffInput" placeholder="Input" >
+    </div> -->
+    <div id="step">
+        <label for="h-input">Step Size = </label><input type="number" id="h-input" value="0.1" min="0.001" class="diff-input">
+        <label for="h-input">StartX </label><input type="number" id="h-input" value="" min="0.001" class="diff-input">
+    
+        <label for="h-input">StartY </label><input type="number" id="h-input" value="" min="0.001" class="diff-input">
+    </div>
+    blue is Eulers method
+    green is midPoint Method 
+    red is Runge Kutta RK4 Method
+
+
+</div>    
+
 </div>   
     <canvas></canvas>
 </body>

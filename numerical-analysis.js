@@ -12,7 +12,7 @@ export function drawSingleDot(x1, y1, color) {
     c.fillStyle = "#333;"
 }
 
-export function drawLineBetweenPoints(x1, y1, x2, y2) {
+export function drawLineBetweenPoints(x1, y1, x2, y2, color="red") {
     let convertedX1 = x1 *squareWidth + canvas.width/2-offsetX;
     let convertedX2 = x2 *squareWidth + canvas.width/2-offsetX;
     let convertedY1= y1 *-squareWidth + canvas.height/2-offsetY;
@@ -21,7 +21,7 @@ export function drawLineBetweenPoints(x1, y1, x2, y2) {
     // console.log(x1, y1, x2, y2);
     
     c.beginPath();
-    c.strokeStyle = "red";
+    c.strokeStyle = `${color}`;
     c.lineWidth = 3;
     c.moveTo(convertedX1, convertedY1);
     c.lineTo(convertedX2, convertedY2);

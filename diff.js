@@ -1,93 +1,98 @@
 import { drawLineBetweenPoints } from "./numerical-analysis.js";
-import {c, canvas} from "./canvas.js";
+import {c} from "./canvas.js";
+import {diffFunction} from "./plotgraph.js";
 
 // Numerically Solving 1st Order Non Elementary ODEs:s
-const h = 0.1;
-const startCoordinate = [1, 0];
+const h = 1;
+const startCoordinate = [0, 0];
 const stop = 10;
 function getDerivative(x, y) {
-    let derivative = (2*x + y)
-    return derivative;
+    return diffFunction(x, y);
 }
 
 
 let arrayOfCoordinates = [startCoordinate];
 //Eulers Method
-function eulersMethod(x, y, derivativeCallback, h) {
+function eulersMethod(x, y, derivativeCallback) {
     if(x > stop) return;
-    let nextCoordinate = getNextCoordinateEuler(x, y);
-    let nextX = nextCoordinate[0];
-    let nextY = nextCoordinate[1];
-    let nextDerivative = derivativeCallback(nextX, nextY);
-    arrayOfCoordinates.push([nextX, nextY]);
+    let nextCoordinates = getNextCoordinateEuler(x, y);
+    arrayOfCoordinates.push(nextCoordinates);
+
+    let nextX = nextCoordinates[0];
+    let nextY = nextCoordinates[1];
 
     eulersMethod(nextX, nextY, derivativeCallback, h);
-    return [nextX, nextY + h * nextDerivative]; 
 }
 
 // Midpoint Method
-function midpointMethod(x, y, derivativeCallback, h) {
+function midPointMethod(x, y, derivativeCallback) {
     if(x > stop) return;
-    let nextCoordinate = getNextCoordinateHeun(x, y);
-    let nextX = nextCoordinate[0];
-    let nextY = nextCoordinate[1];
-    let nextDerivative = derivativeCallback(nextX, nextY);
+    let nextCoordinates = getNextCoordinateMid(x, y);
+    arrayOfCoordinates.push(nextCoordinates);
 
+    let nextX = nextCoordinates[0];
+    let nextY = nextCoordinates[1];
 
-    arrayOfCoordinates.push([nextX, nextY]);
-
-    midpointMethod(nextX, nextY, derivativeCallback, h);
-    return [nextX, nextY + h * nextDerivative]; 
+    midPointMethod(nextX, nextY, derivativeCallback, h);
 }
 
 // Runge Kutta RK4 Method
-function rungeMethod(x, y, derivativeCallback, h) {
+function rungeMethod(x, y, derivativeCallback) {
     if(x > stop) return;
-    let nextCoordinate = getNextCoordinateRK4(x, y);
-    let nextX = nextCoordinate[0];
-    let nextY = nextCoordinate[1];
-    let nextDerivative = derivativeCallback(nextX, nextY);
+    let nextCoordinates = getNextCoordinateRunge(x, y);
+    arrayOfCoordinates.push(nextCoordinates);
 
-
-    arrayOfCoordinates.push([nextX, nextY]);
+    let nextX = nextCoordinates[0];
+    let nextY = nextCoordinates[1];
 
     rungeMethod(nextX, nextY, derivativeCallback, h);
-    return [nextX, nextY + h * nextDerivative]; 
 }
 
 
 function getNextCoordinateEuler(x, y) {
     return [x + h, y + h * getDerivative(x, y)];
 }
-function getNextCoordinateHeun(x, y) {
-    let nextX = x + h;
-    let midPointY = y + getDerivative(x, y) * h/2;
-    let midderivative = getDerivative(x+h/2, midPointY);
-    return [nextX, y + midderivative]
+function getNextCoordinateMid(x, y) {
+    let k1 = getDerivative(x, y);
+    let k2 = getDerivative(x+h/2, y + k1*h/2);
+    
+    let nextX = x +h;
+    let nextY = y + k2*h;
+    return [nextX, nextY];
 }
-function getNextCoordinateRK4(x, y) {
+function getNextCoordinateRunge(x, y) {
     let k1 = getDerivative(x, y);
     let k2 = getDerivative(x+h/2, y + k1*h/2);
     let k3 = getDerivative(x+h/2, y + k2*h/2);
     let k4 = getDerivative(x+h, y + k3*h);
 
-    let nextY = y + (k1 + 2*k2 + 2*k3 + k4)/6;
+    let nextY = y + (k1 + 2*k2 + 2*k3 + k4)*h/6;
     let nextX = x + h;
     return [nextX, nextY]
 }
 
-function graphCoordinate() {
+
+function graphCoordinate(color) {
     c.beginPath();
     c.moveTo(startCoordinate[0], startCoordinate[1]);
-    for(let i = 0; i < arrayOfCoordinates.length; i++) {
+    for(let i = 0; i < arrayOfCoordinates.length-1; i++) {
         let x1 = arrayOfCoordinates[i][0];
         let y1 = arrayOfCoordinates[i][1];
         let x2 = arrayOfCoordinates[i+1][0];
         let y2 = arrayOfCoordinates[i+1][1];
     
-        drawLineBetweenPoints(x1, y1, x2, y2);
+        drawLineBetweenPoints(x1, y1, x2, y2, color);
     }
 }
 
-rungeMethod(1, 0, getDerivative, 0.1);
-graphCoordinate();
+export function graphODE() {
+    if(typeof diffFunction != "function") return;
+    eulersMethod(0, 0, getDerivative);
+    graphCoordinate("blue");
+    arrayOfCoordinates = [startCoordinate];
+    midPointMethod(0, 0, getDerivative);
+    graphCoordinate("green");
+    arrayOfCoordinates = [startCoordinate];
+    rungeMethod(0, 0, getDerivative);
+    graphCoordinate("red");
+}

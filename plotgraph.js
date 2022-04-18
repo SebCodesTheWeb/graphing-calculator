@@ -3,6 +3,7 @@ import Formula from "./parser.js";
 import {clearCanvas, drawGrid, drawAxis} from "./canvas.js";
 import {distanceBetweenPoints, areaBetweenPoints, derivativeAtPoint, volumeBetweenPoints, xAndYDifferenceBetweenPoints, surfaceAreaBetweenPoints, limitAtPoint, continuityBetweenPoints, crossesXAxis, turningPoints, drawReflection, drawLineBetweenPoints} from "./numerical-analysis.js";
 import {differenceToolActivated, distanceToolActivated, areaToolActivated, derivativeToolActivated, volumeToolActivated, surfaceAreaToolActivated, limitToolActivated, anyToolActivated, deactiveAllTools, continuityToolActivated, rootToolActivated, turningPointsToolActivated, snapToolActivated} from "./tools.js";
+import {graphODE} from "./diff.js";
 
 const colors = ["#54F5B8", "#3963ED", "#F76223", "#6921ED", "#FA9F00", "#CD1DF5"];
 const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
@@ -56,6 +57,8 @@ function drawSelectedGraphs() {
     for(let i = 0; i < listOfInputedGraphs.length; i++) {
         listOfInputedGraphs[i].drawInputedGraph();
     }
+    console.log(graphODE);
+    graphODE();
 }
 
 export default class Graph {
@@ -781,6 +784,7 @@ firstFunction.addEventListener("change", function() {
 
 //Live Code Editor =================================================================
 let inputedFunction;
+export let diffFunction;
 const js = document.getElementById("js");
 const codeSpace = document.getElementById("code")
 
@@ -801,6 +805,7 @@ function compile() {
     document.body.onkeyup = function() {
         codeSpace.contentWindow.eval(js.value);
         inputedFunction = codeSpace.contentWindow.myGraph;
+        diffFunction = codeSpace.contentWindow.diffEquation;
       };
     }
 

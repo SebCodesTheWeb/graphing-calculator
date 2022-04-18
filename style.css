@@ -139,6 +139,27 @@ ul > li {
     border-bottom: 1px solid #333;
 }
 
+#inputs-diff {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    text-align: center;
+}
+
+.diff-input {
+    width: 3rem;
+    padding: .25em;
+    font-family: var(--main-font);
+    border-radius: 5px;
+}
+
+#diffInput {
+    width: 60%;
+    padding: .5em .25em;
+    border-radius: 10px;
+}
+
 #single-input {
     width: 30%;
     border-radius: 10px;
@@ -243,7 +264,7 @@ ul > li {
 
 /* Live Code ================================================= */
 textarea {
-    width: 31.25%;
+    width: 37.25%;
     position: absolute;
     left: 22.5%; 
     /* 22.5% is thw width of the menu */
@@ -267,7 +288,7 @@ textarea {
 
   #matrix {
       position: absolute;
-      left: 53.75%;
+      left: 59.75%;
       width: 15%;
       bottom: 0;
       padding: .5rem 2rem;
@@ -297,8 +318,8 @@ textarea {
 
   #diff {
     position: absolute;
-    left: 68.75%;
-    width: 31.25%;
+    left: 74.75%;
+    width: 25.25%;
     bottom: 0;
     padding: 1rem 2rem;
     overflow: scroll;
