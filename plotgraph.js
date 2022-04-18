@@ -27,10 +27,10 @@ export let decimalsUsed = 2;
 export let selectedFunction = 0;
 
 
-let transformationMatrix = [1, 0, 0, 1];
-let transformationApplied = false;
+export let transformationMatrix = [1, 0, 0, 1];
+export let transformationApplied = false;
 //takes in a point and applies the transformation
-function getTransformedCoordinates(x, y) {
+export function getTransformedCoordinates(x, y) {
     let a = x * transformationMatrix[0]
     let b = x * transformationMatrix[1]
     let c = y * transformationMatrix[2]
@@ -42,7 +42,6 @@ function getTransformedCoordinates(x, y) {
     return [newX, newY];
 }
 
-console.log(getTransformedCoordinates(1, 3))
 
 
 function randomColor() {
@@ -50,14 +49,13 @@ function randomColor() {
     return colors[color];
 }
 
-function drawSelectedGraphs() {
+export function drawSelectedGraphs() {
     for(let i = 0; i < listOfGraphs.length; i++) {
         listOfGraphs[i].drawGraph();
     } 
     for(let i = 0; i < listOfInputedGraphs.length; i++) {
         listOfInputedGraphs[i].drawInputedGraph();
     }
-    console.log(graphODE);
     graphODE();
 }
 
@@ -107,7 +105,7 @@ export default class Graph {
 
         for(let i = -canvas.width/2+offsetX; i < canvas.width/2+offsetX; i++) {
             // Firstly get math new math coordinates from matrix
-            let xInput = (i/squareWidth)
+            let xInput = (i/squareWidth);
             let yInput = this.outputFunction((xInput))
             let newCoordinates = getTransformedCoordinates(xInput, yInput);
             let transformedX = newCoordinates[0];
@@ -117,15 +115,11 @@ export default class Graph {
             let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
             let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
 
-            if(!isNaN(canvasY)) { // Only draw if point is defined
+            if(!isNaN(canvasY) && Math.abs(canvasY) < (Math.pow(10, 9))) { // Only draw if point is defined
                 c.lineTo(canvasX, canvasY); //Generating line between coordinates
             } else {
-                c.closePath();
-                c.stroke();
-                c.beginPath();
             }
         }
-        c.closePath();
         c.stroke();
     }
 
@@ -160,7 +154,6 @@ export default class Graph {
         //     }
         // }
         // c.stroke();
-        c.beginPath();
         c.lineWidth = this.lineWidth;
         c.strokeStyle = this.color;
         c.moveTo(0, this.centerY)
@@ -172,17 +165,20 @@ export default class Graph {
             let newCoordinates = getTransformedCoordinates(xInput, yInput);
             let transformedX = newCoordinates[0];
             let transformedY = newCoordinates[1];
-    
+
+            
+            
             //Then get the canvas coordinates to draw
             let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
             let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
-    
-            if(!isNaN(canvasY)) { // Only draw if point is defined
+            
+            if(!isNaN(canvasY) && Math.abs(canvasY) < (Math.pow(10, 9))) { // Only draw if point is defined and under 1 billion away (it has problems with drawing points that are super far away)
                 c.lineTo(canvasX, canvasY); //Generating line between coordinates
             } else {
                 c.stroke();
                 c.beginPath();
             }
+
         }
         c.stroke();
     }
@@ -204,6 +200,7 @@ export default class Graph {
             //Then get the canvas coordinates to draw
             let canvasX = transformedX * squareWidth + canvas.width/2-offsetX;
             let canvasY = transformedY * -squareWidth + canvas.height/2-offsetY; 
+
 
             if(!isNaN(canvasY)) { // Only draw if point is defined
                 c.lineTo(canvasX, canvasY); //Generating line between coordinates
@@ -490,6 +487,7 @@ canvas.addEventListener("dblclick", function(e) {
                 canvas.addEventListener("mousemove", function(e) {
                     if(!differenceToolActivated) return;
                     let mouseX = parseFloat(((e.clientX-(canvas.width/2)+offsetX)/squareWidth).toFixed(decimalsUsed));
+                    console.log(listOfSavedDots[0].mathX, listOfSavedDots[0].mathY);
     
                     drawLineBetweenPoints(listOfSavedDots[0].mathX, listOfSavedDots[0].mathY, mouseX, listOfSavedDots[0].mathY); //Horizontal line
                     drawLineBetweenPoints(mouseX, listOfSavedDots[0].mathY, mouseX, listOfInputedGraphs[selectedFunction].getMathY(mouseX)); // Vertical line
@@ -641,8 +639,8 @@ function limitNumberOfDotsTo(limit, newDot) {
 
 canvas.addEventListener("wheel", function(e) {
     // listOfSavedDots = [];
+    drawSelectedGraphs();
     if(!transformationApplied) {
-        drawSelectedGraphs();
         drawDot(e);
     }
     // drawSavedDots();
@@ -813,7 +811,7 @@ compile();
 function logFunction() {
   if(typeof inputedFunction === "function") {
     let userGraph = new Graph((x) => inputedFunction(x));
-    userGraph.drawTransformedGraph();
+    userGraph.drawGraph();
     listOfGraphs.push(userGraph);
     drawSelectedGraphs();
   }
@@ -896,7 +894,7 @@ const rational = new Graph((x) => Math.pow(x, 2) +3/x);
 const hyperbolic = new Graph((x) => Math.sinh(x));
 const inverseHyperbolic = new Graph((x) => Math.acosh(x));
 const stairCase = new Graph((x) => Math.ceil(x));
-const modulus = new Graph((x) => x*x%x);
+// const modulus = new Graph((x) => x*x%x);
 const weirdShit = new Graph((x) => x<0?x*x*x%x:0);
 const random = new Graph((x) => Math.random() * x);
 
@@ -906,7 +904,7 @@ function theSebastianDFunction(x) {
 }
 
 
-function weisterassFunction(x) {
+function weierstrassFunction(x) {
     let sum = 0;
     let a = 0.5;
     let b = 7;
@@ -914,6 +912,10 @@ function weisterassFunction(x) {
         sum += (Math.pow(a, i) * Math.cos((Math.pow(b, i) * Math.PI * x)));
     }
     return sum;
+}
+
+function modulus() {
+    return Math.pow(x, 2) % x
 }
 
 function volterrasFunction(x) {
@@ -927,7 +929,7 @@ function riemannZetaFunction(x) {
         sum += 1/(Math.pow(i, x));
     }
     return sum;
-};
+}
 
 function getFactorial(x) { //iterative version seemed to work better to graph
     let product = x;
@@ -939,7 +941,7 @@ function getFactorial(x) { //iterative version seemed to work better to graph
     return product;
 }
 
-function papaLambertsWFunction(x) { //Allt these are variations of the real function
+function papaLambertsWFunction(x) { 
     if(Math.abs(x) > 5) return;
     let sum = 0;
     for(let i = 1; i < 6; i++) {
@@ -953,12 +955,11 @@ function myGraph(x) { //one of my personal favourites
 }
 
 function hybridCombo(x) {
-    
     if(x < 2) {
-return Math.cbrt(x);
-}
+    return Math.cbrt(x);
+    }
 
-return hybridCombo(x-2) -Math.log(x);
+    return hybridCombo(x-2) -Math.log(x);
 }
 
 

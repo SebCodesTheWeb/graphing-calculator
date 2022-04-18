@@ -1,5 +1,5 @@
 import {c, canvas, squareWidth, offsetX, offsetY, clearCanvas} from "./canvas.js";
-import {performance, decimalsUsed} from "./plotgraph.js";
+import {performance, decimalsUsed, transformationMatrix, transformationApplied, getTransformedCoordinates} from "./plotgraph.js";
 
 export function drawSingleDot(x1, y1, color) {
     let convertedX1 = x1 *squareWidth + canvas.width/2-offsetX;
@@ -12,7 +12,16 @@ export function drawSingleDot(x1, y1, color) {
     c.fillStyle = "#333;"
 }
 
-export function drawLineBetweenPoints(x1, y1, x2, y2, color="red") {
+export function drawLineBetweenPoints(x1, y1, x2, y2, color="red", transformed=false) {
+    if(transformed) {
+        let newCoordinates = getTransformedCoordinates(x1, y1);
+        x1 = newCoordinates[0];
+        y1 = newCoordinates[1];
+        newCoordinates = getTransformedCoordinates(x2, y2);
+        x2 = newCoordinates[0];
+        y2 = newCoordinates[1];
+    }
+
     let convertedX1 = x1 *squareWidth + canvas.width/2-offsetX;
     let convertedX2 = x2 *squareWidth + canvas.width/2-offsetX;
     let convertedY1= y1 *-squareWidth + canvas.height/2-offsetY;

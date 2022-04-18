@@ -287,6 +287,7 @@ export function drawAxis() {
 
     //Fixes number line =================================
     let blockOffset = window.innerWidth * 0.225;
+    let downMenuOffset = window.innerHeight * 0.25;
 
     if(offsetX > blockOffset+40) { // Blockoffset is the sidebar
         counterOffSetX=offsetX-canvas.width/2 +60 + blockOffset;
@@ -296,9 +297,9 @@ export function drawAxis() {
         counterOffSetX = 0;
     }
 
-    if(offsetY < -innerHeight/2+50) {
-        counterOffSetY=offsetY+canvas.height/2 -50
-    } else if(offsetY > innerHeight/2-50) {
+    if(offsetY < -innerHeight/2+50 + downMenuOffset ) {
+        counterOffSetY=offsetY+canvas.height/2 -50 - downMenuOffset
+    } else if(offsetY > innerHeight/2-50  ) {
         counterOffSetY=offsetY-canvas.height/2 +50
     } else {
         counterOffSetY = 0;

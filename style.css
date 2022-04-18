@@ -270,7 +270,7 @@ textarea {
     /* 22.5% is thw width of the menu */
     bottom: 0%;
     padding: 1rem 2rem;
-    min-height: 22.5%;
+    height: 22.5%;
     /* 22.5% is to achieve perfect 16:9 ratio */
     overflow: scroll;
     display: inline-block;
@@ -296,7 +296,7 @@ textarea {
       display: inline-block;
       background: #333;
       border: 5px solid #555;
-      max-height: 22.5%;
+      height: 22.5%;
       color: #fff;
       font-family: var(--main-font);
   }
@@ -326,15 +326,50 @@ textarea {
     display: inline-block;
     background: #333;
     border: 5px solid #555;
-    min-height: 22.5%;
+    height: 22.5%;
     color: #fff;
     font-family: var(--main-font); 
+  }
+
+  #step {
+      display: flex;
+      flex-direction: column;
+      gap: .5em;
+      margin-bottom: .5em;
+  }
+
+  #step div {
+      display: flex;
+      gap: 1em;
+      justify-content: center;
   }
 
   #reset {
       margin-top: 1em;
       font-family: var(--main-font);
       font-size: 1rem;
+  }
+
+  #methods {
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+  }
+
+  #euler:after {
+      content: "";
+      margin-left: .25em;
+      border: 5px solid blue;
+  }
+  #mid:after {
+      content: "";
+      margin-left: .25em;
+      border: 5px solid green;
+  }
+  #runge:after {
+      content: "";
+      margin-left: .25em;
+      border: 5px solid red;
   }
 
 /* Media Queries ================================================= */

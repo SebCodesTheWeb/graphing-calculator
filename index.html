@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinNeGebra</title>
+    <title>NeLine</title>
     <link rel="icon" type="image/x-icon" href="img/logo.png">
     <link rel="stylesheet" href="style.css">
     <script type="module" src="canvas.js" defer></script>
@@ -18,7 +18,7 @@
 <body>
     <div id="menu">
         <div id="title-and-logo">
-            <h1 id="title">LinNeGebra</h1>
+            <h1 id="title">NeLine</h1>
             <img src="img/logo.png" alt="logo" width="50" id="logo">
         </div>
         <div id="inputs">
@@ -95,13 +95,84 @@
 //Write custom functions!
 function myGraph(x) {
     
-    return x*x*x;
+    return ; 
 }
 
 function diffEquation(x, y) {
 
-    return Math.sin(x);
+    return ; 
 }
+
+//Fun Functions
+function weierstrassFunction(x, a=0.5, b=3) {
+    let sum = 0;
+    for(let i = 0; i < 10; i++) {
+        sum += (Math.pow(a, i) * Math.cos((Math.pow(b, i) * Math.PI * x)));
+    }
+    return sum;
+}
+
+function modulus(x) {
+    return Math.pow(x, 2) % x
+}
+
+function theSebastianDFunction(x) {
+    return (x*x%x+Math.ceil(x) * Math.sin(x) - Math.abs(x) + Math.sign(x) * Math.cbrt(x)%x -Math.tanh(x/10)*Math.E *x + Math.pow(Math.PI, Math.PI) +10 -Math.random(x) + 1/(Math.pow(x, 5)))/10 -4;
+}
+
+function specialCombo(x) { //one of my personal favourites
+    return theSebastianDFunction(x) % weisterassFunction(x)  * modulus(x)   ;
+}
+
+function hybridCombo(x) {
+    if(x < 2) {
+    return Math.cbrt(x);
+    }
+
+    return hybridCombo(x-2) -Math.log(x);
+}
+
+function volterrasFunction(x) {
+    return Math.sin(1/x)*Math.pow(x,2)
+}
+
+function getFactorial(x) { 
+    let product = x;
+    let i = x-1;
+    while (i > 1) {
+        product *= i;
+        i--;
+    }
+    return product;
+}
+
+
+//Fun Differential Equations
+function logisticGrowth(y, k=2, m=5) {
+    return k*y*(1-(y/m)); 
+}
+
+function freeFall(y, k=0.005, m=1) {
+    return 9.82-((k/m) * Math.pow(y, 2))
+}
+
+function orthogonalTrajectory(x, y, c=1) {
+    return (x)/(c-y);
+} 
+
+function radioactiveDecay(x, k) {
+    return -kx;
+}
+
+function exponentialGrowth(x, k) {
+    return kx;
+}
+
+//t1 is room temperature
+function newtonLawOfCooling(k, y, t1) {
+    return -k*(y-t1);
+}
+
     </textarea>    
     <iframe id="code">
     </iframe>
@@ -138,14 +209,20 @@ function diffEquation(x, y) {
         <label for="diffInput">dy/dx = </label><input type="text" id="diffInput" placeholder="Input" >
     </div> -->
     <div id="step">
-        <label for="h-input">Step Size = </label><input type="number" id="h-input" value="0.1" min="0.001" class="diff-input">
-        <label for="h-input">StartX </label><input type="number" id="h-input" value="" min="0.001" class="diff-input">
-    
-        <label for="h-input">StartY </label><input type="number" id="h-input" value="" min="0.001" class="diff-input">
+        <div >
+            <label for="step-input">Step Size = </label><input type="number" id="step-input" value="0.1" min="0.001" class="diff-input" step="0.1">
+            <label for="start-x-input">StartX </label><input type="number" id="start-x-input" value="0"  class="diff-input">
+        </div>
+        <div>
+            <label for="start-y-input">StartY </label><input type="number" id="start-y-input" value="0"class="diff-input">
+            <label for="stop-input">Stop </label><input type="number" id="stop-input" value="100" min="0" class="diff-input">
+        </div>
     </div>
-    blue is Eulers method
-    green is midPoint Method 
-    red is Runge Kutta RK4 Method
+    <div id="methods">
+        <h3 id="euler">Eulers Method</h3>
+        <h3 id="mid">Mid point Method</h3>
+        <h3 id="runge">RK4 Method</h3>
+    </div>
 
 
 </div>    

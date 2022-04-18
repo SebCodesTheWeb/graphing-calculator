@@ -1,19 +1,45 @@
 import { drawLineBetweenPoints } from "./numerical-analysis.js";
-import {c} from "./canvas.js";
-import {diffFunction} from "./plotgraph.js";
+import {c, clearCanvas, drawAxis, drawGrid} from "./canvas.js";
+import {diffFunction, drawSelectedGraphs} from "./plotgraph.js";
 
 // Numerically Solving 1st Order Non Elementary ODEs:s
-const h = 1;
-const startCoordinate = [0, 0];
-const stop = 10;
+let h = 0.1;
+let startCoordinate = [0, 0];
+let stop = 100;
 function getDerivative(x, y) {
     return diffFunction(x, y);
 }
-
-
 let arrayOfCoordinates = [startCoordinate];
+
+document.querySelector("#step-input").addEventListener("change", function() {
+    h = parseFloat(document.querySelector("#step-input").value);
+    reset();
+})
+document.querySelector("#start-x-input").addEventListener("change", function() {
+    startCoordinate[0] = parseFloat(document.querySelector("#start-x-input").value)
+    reset();
+
+})
+document.querySelector("#start-y-input").addEventListener("change", function() {
+    startCoordinate[1] = parseFloat(document.querySelector("#start-y-input").value)
+    reset();
+})
+document.querySelector("#stop-input").addEventListener("change", function() {
+    stop = parseFloat(document.querySelector("#stop-input").value)
+    reset();
+})
+
+function reset() {
+    clearCanvas();
+    drawAxis();
+    drawGrid();
+    drawSelectedGraphs();
+    graphODE();
+}
+
+
 //Eulers Method
-function eulersMethod(x, y, derivativeCallback) {
+function eulersMethod(x, y) {
     if(x > stop) return;
     let nextCoordinates = getNextCoordinateEuler(x, y);
     arrayOfCoordinates.push(nextCoordinates);
@@ -21,11 +47,11 @@ function eulersMethod(x, y, derivativeCallback) {
     let nextX = nextCoordinates[0];
     let nextY = nextCoordinates[1];
 
-    eulersMethod(nextX, nextY, derivativeCallback, h);
+    eulersMethod(nextX, nextY);
 }
 
 // Midpoint Method
-function midPointMethod(x, y, derivativeCallback) {
+function midPointMethod(x, y) {
     if(x > stop) return;
     let nextCoordinates = getNextCoordinateMid(x, y);
     arrayOfCoordinates.push(nextCoordinates);
@@ -33,11 +59,11 @@ function midPointMethod(x, y, derivativeCallback) {
     let nextX = nextCoordinates[0];
     let nextY = nextCoordinates[1];
 
-    midPointMethod(nextX, nextY, derivativeCallback, h);
+    midPointMethod(nextX, nextY);
 }
 
 // Runge Kutta RK4 Method
-function rungeMethod(x, y, derivativeCallback) {
+function rungeMethod(x, y) {
     if(x > stop) return;
     let nextCoordinates = getNextCoordinateRunge(x, y);
     arrayOfCoordinates.push(nextCoordinates);
@@ -45,7 +71,7 @@ function rungeMethod(x, y, derivativeCallback) {
     let nextX = nextCoordinates[0];
     let nextY = nextCoordinates[1];
 
-    rungeMethod(nextX, nextY, derivativeCallback, h);
+    rungeMethod(nextX, nextY);
 }
 
 
@@ -75,24 +101,34 @@ function getNextCoordinateRunge(x, y) {
 function graphCoordinate(color) {
     c.beginPath();
     c.moveTo(startCoordinate[0], startCoordinate[1]);
+    c.lineTo(arrayOfCoordinates[0][1], arrayOfCoordinates[0][1]);
+    c.stroke();
     for(let i = 0; i < arrayOfCoordinates.length-1; i++) {
         let x1 = arrayOfCoordinates[i][0];
         let y1 = arrayOfCoordinates[i][1];
         let x2 = arrayOfCoordinates[i+1][0];
         let y2 = arrayOfCoordinates[i+1][1];
     
-        drawLineBetweenPoints(x1, y1, x2, y2, color);
+        drawLineBetweenPoints(x1, y1, x2, y2, color, true);
     }
 }
 
 export function graphODE() {
     if(typeof diffFunction != "function") return;
-    eulersMethod(0, 0, getDerivative);
+    
+    
+    let x = startCoordinate[0];
+    let y = startCoordinate[1];
+    
+    console.log(x, y, getDerivative(x, y));
+    arrayOfCoordinates = [startCoordinate];
+    eulersMethod(x, y);
     graphCoordinate("blue");
     arrayOfCoordinates = [startCoordinate];
-    midPointMethod(0, 0, getDerivative);
-    graphCoordinate("green");
-    arrayOfCoordinates = [startCoordinate];
-    rungeMethod(0, 0, getDerivative);
+    rungeMethod(x, y);
     graphCoordinate("red");
-}
+    arrayOfCoordinates = [startCoordinate];
+    midPointMethod(x, y);
+    graphCoordinate("green");
+}    
+
