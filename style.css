@@ -228,6 +228,16 @@ ul > li {
     line-height: 1.6em;
 }
 
+#info-demo span {
+    font-size: 1.75rem;
+    line-height: 2em;
+}
+
+#info-demo p {
+    font-size: 1rem;
+    text-align: justify; 
+}
+
 /* Tools ================================================================= */
 #standard, #snap {
     padding: 1em;
