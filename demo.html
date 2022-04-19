@@ -23,7 +23,7 @@
         <p><span>How does NeLine work? </span><br> NeLine is a relatively complex program with over 3500 lines of code. For a more in depht-technical view you can view the code on github and view my comments. On an overall basis however, this is how it works:<br> <br>
         
         It's built on JavaScript, HTML, CSS with no frameworks.
-        (It does however use a script by Alexander Schrödinger that parses user input)
+        (It does however use a script by Alexander Schenkel- https://github.com/bylexus/fparse that parses user input)
         It uses the canvas API to display everything. By first computing everything in normal Math coordinates, and then converting them to the correct canvas coordinates. It uses a scale and squarewidth variable to control the sizing of the graphs, and an offset, which changes the position of things to give the illusion of motion when panning. <br><br>
 
         To graph function, it takes in user input and turns it into a function, it then iterates a certain amount of x values in the visable window, and the computes the corresponding y-value given the inputed function. It then computes an array of points, and draws lines between these points to graph the function.<br><br>
