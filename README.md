@@ -1,6 +1,6 @@
 # graphing-calculator
 Graphing Calculator to Plot Graphs, Solve DIfferential Equations and Visualize Linear Transformations
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/6JyfwWD5Vkw/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+[![yt-video](https://img.youtube.com/vi/6JyfwWD5Vkw/0.jpg)](https://www.youtube.com/watch?v=6JyfwWD5Vkw/0)
 
 Hello there!
 During spring break, I have built my very own graphing calculator, I am now challenging geogebra and desmos haha!
