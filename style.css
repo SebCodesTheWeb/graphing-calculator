@@ -221,6 +221,7 @@ ul > li {
 
 #demo-page{
     background-color: #333;
+    cursor: auto;
 }
 
 #info-demo {
