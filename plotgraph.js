@@ -5,7 +5,7 @@ import {distanceBetweenPoints, areaBetweenPoints, derivativeAtPoint, volumeBetwe
 import {differenceToolActivated, distanceToolActivated, areaToolActivated, derivativeToolActivated, volumeToolActivated, surfaceAreaToolActivated, limitToolActivated, anyToolActivated, deactiveAllTools, continuityToolActivated, rootToolActivated, turningPointsToolActivated, snapToolActivated} from "./tools.js";
 import {graphODE} from "./diff.js";
 
-const colors = ["#54F5B8", "#3963ED", "#F76223", "#6921ED", "#FA9F00", "#CD1DF5"];
+const colors = ["#54F5B8", "#000000", "#F76223", "#6921ED", "#FA9F00", "#CD1DF5"];
 const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 let currentLetter = 0;
 let listOfGraphs = [];
@@ -42,6 +42,7 @@ export function getTransformedCoordinates(x, y) {
     return [newX, newY];
 }
 
+//More random shit 
 
 
 function randomColor() {
